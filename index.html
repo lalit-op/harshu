@@ -8,7 +8,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="preconnect" href="https://raw.githubusercontent.com">
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
-    <!-- Preconnect to primary streaming endpoint for faster stream initialization -->
     <link rel="preconnect" href="https://jtvxweb.pages.dev">
     
     <title>Live TV | Feather</title>
@@ -26,7 +25,6 @@
         *::-webkit-scrollbar { display: none; } 
         
         body {
-            /* Dynamic New Age Background */
             background-color: #020617;
             background-image: 
                 radial-gradient(at 0% 0%, rgba(30, 27, 75, 0.4) 0px, transparent 50%),
@@ -39,7 +37,7 @@
             overflow-x: hidden;
             user-select: none; 
             height: 100vh;
-            height: 100dvh; 
+            min-height: 100dvh; 
             display: flex;
             flex-direction: column;
             overscroll-behavior-y: none; 
@@ -56,12 +54,24 @@
         a { text-decoration: none; color: inherit; }
 
         #appContainer {
-            padding: calc(env(safe-area-inset-top, 12px) + 7px) calc(env(safe-area-inset-right, 0px) + 7px) 0 calc(env(safe-area-inset-left, 0px) + 7px);
+            padding: 0 calc(env(safe-area-inset-right, 0px) + 7px) 0 calc(env(safe-area-inset-left, 0px) + 7px);
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            background: rgba(2, 6, 23, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding-top: calc(env(safe-area-inset-top, 12px) + 7px);
+            margin: 0 -7px 8px -7px;
+            padding-bottom: 4px;
         }
 
         .cats {
@@ -72,7 +82,6 @@
             margin: 0 -16px 4px -16px; 
             flex-shrink: 0; 
             -webkit-overflow-scrolling: touch;
-            /* Smooth fade out at edges for scrolling list */
             mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
             -webkit-mask-image: linear-gradient(to right, transparent, black 16px, black calc(100% - 16px), transparent);
             will-change: scroll-position;
@@ -100,12 +109,14 @@
             backface-visibility: hidden;
         }
         
-        .chip:hover {
-            transform: translateY(-2px) translateZ(0);
-            background: rgba(14, 165, 233, 0.2);
-            color: white;
-            border-color: rgba(14, 165, 233, 0.5);
-            box-shadow: 0 8px 20px -3px rgba(14, 165, 233, 0.3);
+        @media (hover: hover) and (pointer: fine) {
+            .chip:hover {
+                transform: translateY(-2px) translateZ(0);
+                background: rgba(14, 165, 233, 0.2);
+                color: white;
+                border-color: rgba(14, 165, 233, 0.5);
+                box-shadow: 0 8px 20px -3px rgba(14, 165, 233, 0.3);
+            }
         }
         
         .chip:active {
@@ -128,9 +139,12 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)); 
-            gap: 12px;
-            padding: 8px 8px calc(60px + env(safe-area-inset-bottom, 0px)) 8px;
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px;
+            padding: 4px 8px calc(80px + env(safe-area-inset-bottom, 0px)) 8px;
+        }
+        @media (max-width: 350px) {
+            .grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
         }
         @media (min-width: 640px) {
             .grid { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 14px; }
@@ -163,8 +177,6 @@
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-            
-            /* High-Performance TV Optimizations */
             contain: layout style paint;
             content-visibility: auto; 
             contain-intrinsic-size: 110px;
@@ -317,9 +329,11 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             will-change: transform, background-color;
         }
-        .action-btn-pill:hover { 
-            background: rgba(255, 255, 255, 0.2); 
-            transform: translateY(-2px) translateZ(0);
+        @media (hover: hover) and (pointer: fine) {
+            .action-btn-pill:hover { 
+                background: rgba(255, 255, 255, 0.2); 
+                transform: translateY(-2px) translateZ(0);
+            }
         }
         .action-btn-pill:active { transform: scale(0.92) translateZ(0); }
 
@@ -333,21 +347,11 @@
             font-weight: 700;
             border: none;
         }
-        .fs-btn-pill:hover {
-            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5), inset 0 0 0 1px rgba(255,255,255,0.3);
-            transform: scale(1.02) translateZ(0);
-        }
-
-        .orient-landscape {
-            background: linear-gradient(90deg, #eab308, #f97316) !important;
-            color: #ffffff !important;
-            border-color: transparent !important;
-        }
-        
-        .orient-portrait {
-            background: linear-gradient(90deg, #f8fafc, #22c55e) !important;
-            color: #0f172a !important;
-            border-color: transparent !important;
+        @media (hover: hover) and (pointer: fine) {
+            .fs-btn-pill:hover {
+                box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5), inset 0 0 0 1px rgba(255,255,255,0.3);
+                transform: scale(1.02) translateZ(0);
+            }
         }
 
         #playerSidebar {
@@ -388,8 +392,13 @@
             border: 1px solid transparent;
             will-change: background-color;
         }
-        .yt-list-item:hover {
-            background-color: rgba(255,255,255,0.04);
+        @media (hover: hover) and (pointer: fine) {
+            .yt-list-item:hover {
+                background-color: rgba(255,255,255,0.04);
+            }
+        }
+        .yt-list-item:active {
+            background-color: rgba(255,255,255,0.08);
         }
         .yt-list-item.active {
             background-color: rgba(255, 255, 255, 0.08);
@@ -449,57 +458,61 @@
             overflow: hidden;
         }
 
-        /* Base state for the fullscreen floating button */
-        #fsBtnWrapper {
-            left: 16px;
-            top: 16px;
+        .mobile-fullscreen {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            min-height: 100dvh !important;
+            z-index: 999999 !important;
+            background: black !important;
+            border-radius: 0 !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         @media (max-width: 1023px) {
-            /* Mobile Floating Player Bar */
             .player-top-bar { 
-                position: absolute;
-                top: env(safe-area-inset-top, 12px);
-                left: 12px;
-                right: 12px;
-                background: rgba(15, 23, 42, 0.55);
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 100px;
-                padding: 10px 16px;
+                position: relative;
+                background: #020617; 
+                border: none;
+                border-radius: 0;
+                padding: max(env(safe-area-inset-top, 12px), 12px) 16px 12px 16px;
                 z-index: 50;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.4);
             }
             .player-content-area { 
                 padding: 0; 
                 position: relative; 
+                flex-direction: column; 
             }
             
             #videoWrapper {
+                position: sticky;
+                top: 0;
+                z-index: 45;
                 width: 100%;
-                height: 100vh;
-                height: 100dvh; /* Full viewport height naturally */
+                aspect-ratio: 16 / 9;
+                height: auto;
                 order: 1; 
                 flex-shrink: 0;
+                border-radius: 0;
+                border: none;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                box-shadow: 0 10px 30px rgba(0,0,0,0.6);
             }
+            
             #playerSidebar {
-                display: none; /* Hide standard sidebar on mobile */
-            }
-        }
-
-        /* Mobile Portrait: Hide Overlay explicitly */
-        @media (max-width: 1023px) and (orientation: portrait) {
-            #fsOverlay { display: none !important; }
-        }
-
-        /* Mobile Landscape: Show Overlay & Move Button to Top Right */
-        @media (max-width: 1023px) and (orientation: landscape) {
-            #fsOverlay { display: block !important; }
-            #fsBtnWrapper {
-                left: auto !important;
-                right: max(env(safe-area-inset-right, 16px), 16px) !important;
-                top: max(env(safe-area-inset-top, 16px), 16px) !important;
+                display: flex;
+                order: 2;
+                flex: 1;
+                width: 100%;
+                border-radius: 0;
+                border: none;
+                background: transparent;
+                box-shadow: none;
+                padding-bottom: env(safe-area-inset-bottom, 0px);
             }
         }
 
@@ -571,7 +584,7 @@
 <body>
 
 <div id="appContainer">
-    <div class="w-full mb-3">
+    <div class="sticky-header">
         <div class="cats w-full" id="categoryContainer" role="tablist"></div>
     </div>
 
@@ -580,7 +593,7 @@
     </div>
 </div>
 
-<div id="playerContainer" class="fixed inset-0 z-[100] hidden flex-col h-[100dvh]">
+<div id="playerContainer" class="fixed inset-0 z-[100] hidden flex-col h-[100vh] min-h-[100dvh]">
     <div class="player-top-bar">
         <!-- Left: Back Button -->
         <div class="flex-1 flex justify-start">
@@ -596,10 +609,6 @@
         <div class="flex items-center justify-center gap-2">
             <button id="playPauseBtn" onclick="togglePlayPause()" class="action-btn-pill flex" style="padding: 10px 14px;" tabindex="0" title="Pause">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-            </button>
-            <button id="orientationBtn" onclick="toggleOrientation()" class="action-btn-pill orient-landscape hidden" style="padding: 8px 14px;" tabindex="0" title="Toggle Aspect Ratio">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
-                <span id="orientationText" class="ml-1 text-[12px] font-bold">16:9</span>
             </button>
             <button onclick="togglePlayerFullscreen()" class="action-btn-pill fs-btn-pill flex" tabindex="0">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
@@ -626,11 +635,10 @@
                 <!-- Iframe generated dynamically -->
             </div>
             
-            <!-- Fullscreen Mode Overlay -->
-            <div id="fsOverlay" class="absolute inset-0 pointer-events-none z-[60] hidden">
-                <!-- Toggle Button with specifically added fsBtnWrapper ID -->
-                <div id="fsBtnWrapper" class="absolute pointer-events-auto transition-all duration-300 z-[65]">
-                    <button id="fsChannelBtn" onclick="toggleFsSidebar()" class="bg-black/60 text-white p-3 pr-2 pl-3 rounded-xl border border-white/20 backdrop-blur-md hover:bg-black/90 transition-all shadow-[4px_0_15px_rgba(0,0,0,0.5)] flex items-center gap-2 will-change-transform" title="Open Channels">
+            <div id="fsOverlay" class="absolute inset-0 pointer-events-none z-[99999]" style="display: none;">
+                <!-- Toggle Button (Moved to Upper Left) -->
+                <div id="fsBtnWrapper" class="absolute left-4 top-4 pointer-events-auto transition-all duration-300 z-[65]">
+                    <button id="fsChannelBtn" onclick="toggleFsSidebar()" class="bg-black/60 text-white p-3 pl-2 pr-3 rounded-xl border border-white/20 backdrop-blur-md hover:bg-black/90 transition-all shadow-[4px_0_15px_rgba(0,0,0,0.5)] flex items-center gap-2 will-change-transform" title="Open Channels">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
                     </button>
                 </div>
@@ -655,6 +663,7 @@
 <div id="toastMsg" class="toast"></div>
 
 <script>
+    // Overrides for standard blocking popups based on best practices
     window.open = function() { console.warn("Popup blocked."); return null; };
     window.alert = function() { console.warn("Alert blocked."); return false; };
     window.confirm = function() { console.warn("Confirm blocked."); return false; };
@@ -675,22 +684,15 @@
     const videoWrapper = document.getElementById('videoWrapper');
     const sidebarList = document.getElementById('sidebarList');
 
-    const orientationBtn = document.getElementById('orientationBtn');
-    if (isMobile && orientationBtn) {
-        orientationBtn.classList.remove('hidden');
-        orientationBtn.classList.add('flex');
-    }
-
     let allChannels = [];
     let activeCategory = window.location.hash ? decodeURIComponent(window.location.hash.substring(1).split('/')[0]) : 'All';
     let genres = new Set();
     
-    let currentOrientation = 'landscape';
     let storedFavs = localStorage.getItem('tvFavsV2');
     
     let defaultFavs = [
         "Sony SAB SD",
-        isMobile ? "Sony Pal" : "Sony Pal 2",
+        "Sony Pal 2",
         "Disney Channel",
         "Hungama TV", 
         "Sony Yay", 
@@ -702,28 +704,75 @@
     ];
     let favorites = storedFavs !== null ? JSON.parse(storedFavs) : defaultFavs;
     
+    // Migration: automatically swap Pal with Pal 2 for returning users
+    const pal2Idx = favorites.indexOf("Sony Pal");
+    if (pal2Idx !== -1) {
+        favorites[pal2Idx] = "Sony Pal 2";
+        localStorage.setItem('tvFavsV2', JSON.stringify(favorites));
+    }
+    
     let isAutoFS = isMobile ? false : (localStorage.getItem('tvAutoFS') !== 'false');
     let autoFsTimer;
     let isStreamPlaying = true;
+    let isPseudoFullscreen = false;
 
     function getFullscreenElement() {
         return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
     }
 
-    function exitFullscreen() {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        
+    function applyLandscapeLock() {
         if (isMobile) {
-            try { 
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
-                } else if (screen.unlockOrientation) {
-                    screen.unlockOrientation();
-                } else if (screen.webkitUnlockOrientation) {
-                    screen.webkitUnlockOrientation();
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(e => console.warn("Orientation lock unsupported:", e));
+                } else if (screen.lockOrientation) {
+                    screen.lockOrientation('landscape');
+                } else if (screen.webkitLockOrientation) {
+                    screen.webkitLockOrientation('landscape');
+                } else if (screen.mozLockOrientation) {
+                    screen.mozLockOrientation('landscape');
+                } else if (screen.msLockOrientation) {
+                    screen.msLockOrientation('landscape');
                 }
-            } catch(e) {}
+            } catch(e) { console.warn("Lock API error:", e); }
+        }
+    }
+
+    function enterFullscreenLogic() {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isMobile && isIOS) {
+            videoWrapper.classList.add("mobile-fullscreen");
+            isPseudoFullscreen = true;
+            updateFullscreenUI();
+        } else {
+            safeRequestFullscreen(videoWrapper, () => {
+                videoWrapper.classList.add("mobile-fullscreen");
+                isPseudoFullscreen = true;
+                updateFullscreenUI();
+            });
+            isPseudoFullscreen = false;
+        }
+    }
+
+    function exitFullscreenLogic() {
+        if (isMobile) {
+            videoWrapper.classList.remove("mobile-fullscreen");
+            isPseudoFullscreen = false;
+            updateFullscreenUI();
+        } else {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+    }
+
+    function togglePlayerFullscreen() {
+        const isNativeFS = !!getFullscreenElement();
+        if (isMobile) {
+            if (isPseudoFullscreen) exitFullscreenLogic();
+            else enterFullscreenLogic();
+        } else {
+            if (isNativeFS) exitFullscreenLogic();
+            else enterFullscreenLogic();
         }
     }
 
@@ -758,7 +807,8 @@
 
     const categoryIcons = {
         'All': '📺', 'Favorites': '❤️', 'Fun-Ment': '🎭', 
-        'Movies': '🎬', 'Kids': '🧸', 'Info': '🌎', 'News': '📰', 'Sports': '⚽'
+        'Movies': '🎬', 'Kids': '🧸', 'Info': '🌎', 'News': '📰', 'Sports': '⚽',
+        'Music': '🎵', 'Regional': '🌍'
     };
 
     async function fetchData() {
@@ -845,7 +895,6 @@
             return { name: chanName, image: imgUrl, link: linkUrl, genre: genreName };
         });
 
-        const sabIndex = processed.findIndex(c => c.name === 'Sony SAB HD');
         const yayIndex = processed.findIndex(c => c.name.toLowerCase().includes('sony yay'));
         if (yayIndex === -1) {
             processed.push({ name: "Sony Yay", link: "https://jtvxweb.pages.dev/pind?id=872", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyYAYHin.png", genre: "Kids" });
@@ -854,12 +903,7 @@
 
         const palIndexOriginal = processed.findIndex(c => c.name === 'Sony Pal');
         if (palIndexOriginal === -1) {
-            processed.push({ name: "Sony Pal", link: "https://gdl-live-tv.pages.dev/watch?ch=sony-pal", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_Pal.png", genre: "Fun-Ment" });
-        }
-
-        const pal2Index = processed.findIndex(c => c.name === 'Sony Pal 2');
-        if (pal2Index === -1) {
-            processed.push({ name: "Sony Pal 2", link: "https://gdl-live-tv.pages.dev/watch?ch=sony-pal", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_Pal.png", genre: "Fun-Ment" });
+            processed.push({ name: "Sony Pal", link: "https://allinonereborn2.online/sony/ptest1.html?id=sony-pal", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_Pal.png", genre: "Fun-Ment" });
         }
 
         const ss2Index = processed.findIndex(c => c.name === 'Star Sports 2');
@@ -956,7 +1000,7 @@
 
     function renderCategories() {
         let html = '';
-        const order = ['All', 'Favorites', 'Fun-Ment', 'Movies', 'Sports', 'Kids', 'Info', 'News'];
+        const order = ['All', 'Favorites', 'Fun-Ment', 'Movies', 'Sports', 'Kids', 'Info', 'News', 'Music', 'Regional'];
         order.forEach(genre => {
             if (genres.has(genre)) {
                 let icon = categoryIcons[genre] || '📺';
@@ -1040,7 +1084,7 @@
             playerContainer.style.display = 'none';
             appContainer.style.display = 'flex';
             
-            if (getFullscreenElement()) exitFullscreen();
+            if (getFullscreenElement() || isPseudoFullscreen) exitFullscreenLogic();
         }
 
         if (genres.has(hashVal) || hashVal === 'All') {
@@ -1125,6 +1169,7 @@
             document.getElementById('mediaContainer').innerHTML = `
                 <video id="playerVideo"
                        controls
+                       controlsList="nofullscreen"
                        autoplay
                        style="width:100%;height:100%;background:#000;outline:none;">
                 </video>
@@ -1142,9 +1187,9 @@
                 <iframe 
                     id="playerIframe"
                     src="${finalUrl}" 
-                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture" 
+                    allow="autoplay; encrypted-media; picture-in-picture" 
                     sandbox="allow-scripts allow-same-origin"
-                    allowfullscreen>
+                    style="width: 100%; height: 100%; border: none;">
                 </iframe>
             `;
         }
@@ -1182,8 +1227,8 @@
 
         if (isAutoFS) {
             autoFsTimer = setTimeout(() => {
-                if (!getFullscreenElement() && playerContainer.style.display === 'flex') {
-                    safeRequestFullscreen(videoWrapper);
+                if (!getFullscreenElement() && !isPseudoFullscreen && playerContainer.style.display === 'flex') {
+                    enterFullscreenLogic();
                 }
             }, 5000);
         }
@@ -1367,7 +1412,6 @@
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
 
-    // Completely restored and syntax-fixed share favorites function
     function shareFavorites() {
         if (favorites.length === 0) return showToast("No favs to backup!");
         const favStr = encodeURIComponent(JSON.stringify(favorites));
@@ -1392,50 +1436,50 @@
         if (sidebar) sidebar.classList.toggle('-translate-x-full');
     }
 
-    // Enhanced debounce and explicit landscape checking logic to counter Android Chrome delays
-    let fsDebounce;
-    function handleFsChange() {
-        clearTimeout(fsDebounce);
-        // Wait 200ms to allow mobile browsers time to calculate their new physical dimensions
-        fsDebounce = setTimeout(() => {
-            const fsEl = getFullscreenElement();
-            const overlay = document.getElementById('fsOverlay');
-            
-            // Safer detection of Landscape vs Portrait for dynamic buttons
-            let isLandscape = window.innerWidth > window.innerHeight;
-            if (screen.orientation && screen.orientation.type) {
-                isLandscape = screen.orientation.type.startsWith('landscape');
-            }
-            const isMob = window.innerWidth < 1024;
+    function updateFullscreenUI() {
+        const overlay = document.getElementById('fsOverlay');
+        if (!overlay) return;
 
-            if (overlay) {
-                if ((fsEl && (fsEl.id === 'videoWrapper' || fsEl.id === 'playerContainer')) || (isMob && isLandscape)) {
-                    overlay.classList.remove('hidden');
-                    overlay.style.display = 'block'; // Force visibility
-                } else {
-                    overlay.classList.add('hidden');
-                    overlay.style.display = ''; // Reset display style to rely on CSS
-                    const sidebar = document.getElementById('fsSidebar');
-                    if (sidebar) sidebar.classList.add('-translate-x-full');
-                }
+        const showOverlay = !!getFullscreenElement() || isPseudoFullscreen;
+
+        overlay.style.display = showOverlay ? "block" : "none";
+        overlay.classList.toggle("hidden", !showOverlay);
+
+        if (!showOverlay) {
+            document.getElementById("fsSidebar")?.classList.add("-translate-x-full");
+            // Automatically unlock orientation when exiting fullscreen
+            if (isMobile) {
+                try {
+                    if (screen.orientation && screen.orientation.unlock) {
+                        screen.orientation.unlock();
+                    } else if (screen.unlockOrientation) {
+                        screen.unlockOrientation();
+                    } else if (screen.webkitUnlockOrientation) {
+                        screen.webkitUnlockOrientation();
+                    }
+                } catch(e) {}
             }
-        }, 200); 
+        } else {
+            // Automatically lock to landscape when entering fullscreen
+            applyLandscapeLock();
+        }
     }
     
-    document.addEventListener('fullscreenchange', handleFsChange, { passive: true });
-    document.addEventListener('webkitfullscreenchange', handleFsChange, { passive: true });
-    document.addEventListener('mozfullscreenchange', handleFsChange, { passive: true });
-    document.addEventListener('MSFullscreenChange', handleFsChange, { passive: true });
+    window.addEventListener("resize", updateFullscreenUI, { passive: true });
+    window.addEventListener("orientationchange", () => {
+        setTimeout(updateFullscreenUI, 300);
+    }, { passive: true });
     
-    // Crucial listeners for mobile rotation changes
-    window.addEventListener('resize', handleFsChange, { passive: true });
-    window.addEventListener('orientationchange', handleFsChange, { passive: true });
+    document.addEventListener('fullscreenchange', updateFullscreenUI, { passive: true });
+    document.addEventListener('webkitfullscreenchange', updateFullscreenUI, { passive: true });
+    document.addEventListener('mozfullscreenchange', updateFullscreenUI, { passive: true });
+    document.addEventListener('MSFullscreenChange', updateFullscreenUI, { passive: true });
 
     window.addEventListener('keydown', function(e) {
         if (e.keyCode === 10009 || e.keyCode === 461 || e.keyCode === 27 || e.key === 'Escape') {
             if (playerContainer.style.display === 'flex') {
-                if (getFullscreenElement()) {
-                     exitFullscreen();
+                if (getFullscreenElement() || isPseudoFullscreen) {
+                     exitFullscreenLogic();
                      e.preventDefault(); 
                      return;
                 }
@@ -1451,88 +1495,28 @@
         }
     }, { passive: false });
 
-    function togglePlayerFullscreen() {
-        if (!getFullscreenElement()) {
-            safeRequestFullscreen(videoWrapper);
-        } else {
-            exitFullscreen();
-        }
-    }
-
-    function toggleOrientation() {
-        if (!isMobile) return;
-        currentOrientation = currentOrientation === 'landscape' ? 'portrait' : 'landscape';
-        
-        const textEl = document.getElementById('orientationText');
-        const btnEl = document.getElementById('orientationBtn');
-        
-        if (currentOrientation === 'landscape') {
-            if (textEl) textEl.innerText = '16:9';
-            if (btnEl) {
-                btnEl.classList.add('orient-landscape');
-                btnEl.classList.remove('orient-portrait');
-            }
-            showToast("Landscape Mode (16:9)");
-        } else {
-            if (textEl) textEl.innerText = '9:16';
-            if (btnEl) {
-                btnEl.classList.add('orient-portrait');
-                btnEl.classList.remove('orient-landscape');
-            }
-            showToast("Portrait Mode (9:16)");
-        }
-
-        if (!getFullscreenElement()) {
-            safeRequestFullscreen(videoWrapper);
-        } else {
-            applyOrientationLock();
-        }
-    }
-
-    function applyOrientationLock() {
-        if (isMobile) {
-            try {
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock(currentOrientation).catch(e => console.warn("Orientation lock unsupported:", e));
-                } else if (screen.lockOrientation) {
-                    screen.lockOrientation(currentOrientation);
-                } else if (screen.webkitLockOrientation) {
-                    screen.webkitLockOrientation(currentOrientation);
-                } else if (screen.mozLockOrientation) {
-                    screen.mozLockOrientation(currentOrientation);
-                } else if (screen.msLockOrientation) {
-                    screen.msLockOrientation(currentOrientation);
-                }
-            } catch(e) { console.warn("Lock API error:", e); }
-        }
-    }
-
     function safeRequestFullscreen(element, fallbackCallback = null) {
         try {
             let promise;
             if (element.requestFullscreen) {
                 promise = element.requestFullscreen();
             } else if (element.webkitRequestFullscreen) {
-                element.webkitRequestFullscreen();
+                promise = element.webkitRequestFullscreen();
             } else if (element.webkitRequestFullScreen) {
-                element.webkitRequestFullScreen();
+                promise = element.webkitRequestFullScreen();
             } else if (element.msRequestFullscreen) {
-                element.msRequestFullscreen();
+                promise = element.msRequestFullscreen();
             } else if (element.mozRequestFullScreen) {
-                element.mozRequestFullScreen();
+                promise = element.mozRequestFullScreen();
             }
             
-            const lockOrientation = () => {
-                applyOrientationLock();
-            };
-            
             if (promise !== undefined) {
-                promise.then(lockOrientation).catch(err => {
+                promise.then(() => {}).catch(err => {
                     console.warn("Fullscreen blocked:", err);
                     if (fallbackCallback) fallbackCallback();
                 });
-            } else {
-                setTimeout(lockOrientation, 300);
+            } else if (!element.requestFullscreen && fallbackCallback) {
+                fallbackCallback();
             }
         } catch (e) {
             console.error("FS Error:", e);
