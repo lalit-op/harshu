@@ -692,7 +692,7 @@
     
     let defaultFavs = [
         "Sony SAB SD",
-        "Sony Pal 2",
+        "Sony Pal",
         "Disney Channel",
         "Hungama TV", 
         "Sony Yay", 
@@ -704,10 +704,10 @@
     ];
     let favorites = storedFavs !== null ? JSON.parse(storedFavs) : defaultFavs;
     
-    // Migration: automatically swap Pal with Pal 2 for returning users
-    const pal2Idx = favorites.indexOf("Sony Pal");
+    // Migration: automatically swap Pal 2 with Pal for returning users
+    const pal2Idx = favorites.indexOf("Sony Pal 2");
     if (pal2Idx !== -1) {
-        favorites[pal2Idx] = "Sony Pal 2";
+        favorites[pal2Idx] = "Sony Pal";
         localStorage.setItem('tvFavsV2', JSON.stringify(favorites));
     }
     
@@ -903,7 +903,7 @@
 
         const palIndexOriginal = processed.findIndex(c => c.name === 'Sony Pal');
         if (palIndexOriginal === -1) {
-            processed.push({ name: "Sony Pal", link: "https://allinonereborn2.online/sony/ptest1.html?id=sony-pal", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_Pal.png", genre: "Fun-Ment" });
+            processed.push({ name: "Sony Pal", link: "https://gdl-live-tv.pages.dev/watch?ch=sony-pal", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_Pal.png", genre: "Fun-Ment" });
         }
 
         const ss2Index = processed.findIndex(c => c.name === 'Star Sports 2');
@@ -1187,9 +1187,13 @@
                 <iframe 
                     id="playerIframe"
                     src="${finalUrl}" 
-                    allow="autoplay; encrypted-media; picture-in-picture" 
-                    sandbox="allow-scripts allow-same-origin"
-                    style="width: 100%; height: 100%; border: none;">
+                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen" 
+                    allowfullscreen="true"
+                    webkitallowfullscreen="true"
+                    mozallowfullscreen="true"
+                    scrolling="no"
+                    frameborder="0"
+                    style="width: 100%; height: 100%; border: none; background-color: #000000; overflow: hidden;">
                 </iframe>
             `;
         }
