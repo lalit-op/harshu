@@ -2470,20 +2470,27 @@
         }
 
         function filterStations(category) {
-            activeCategoryFilter = category;
-            if (window.location.hash !== '#stations') window.location.hash = 'stations';
-            
-            const tabs = document.querySelectorAll('.station-tab-btn');
-            tabs.forEach(tab => {
-                if (tab.getAttribute('data-cat') === category) {
-                    tab.classList.add('text-primary', 'border-primary');
-                    tab.classList.remove('text-gray-500', 'border-transparent');
-                } else {
-                    tab.classList.remove('text-primary', 'border-primary');
-                    tab.classList.add('text-gray-500', 'border-transparent');
-                }
-            });
-            renderLists();
+    activeCategoryFilter = category;
+
+    // Keep the selected category in the URL
+    const newHash = `stations/${encodeURIComponent(category)}`;
+
+    if (window.location.hash !== `#${newHash}`) {
+        window.location.hash = newHash;
+    }
+
+    const tabs = document.querySelectorAll('.station-tab-btn');
+
+    tabs.forEach(tab => {
+        const isActive = tab.getAttribute('data-cat') === category;
+
+        tab.classList.toggle('text-primary', isActive);
+        tab.classList.toggle('border-primary', isActive);
+        tab.classList.toggle('text-gray-500', !isActive);
+        tab.classList.toggle('border-transparent', !isActive);
+    });
+
+    renderLists();
         }
 
         function generateStationCardHTML(st, idx, isPlayingThis, isActive, searchTerm) {
