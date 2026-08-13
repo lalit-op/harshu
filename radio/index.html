@@ -1292,8 +1292,8 @@
             { id: 10, name: "Fun Asia Radio", slogan: "Bollywood Music • Entertainment • 24×7 Live", location: "Internet", url: "https://funasia.streamguys1.com/live-1?_=1545125406418", color: "#ff9c33", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/funasia1049.png", category: "Bollywood" },
             { id: 11, name: "Caravan Radio", slogan: "Evergreen Bollywood Hits • 24×7 Live", location: "Internet", url: "https://streamlky.alsolnet.com/radiocaravanaudio", color: "#ffb347", isPopular: true, isTrending: true, isFavorite: false, logo: "https://radiosindia.com/images/radiocaravan.jpg", category: "Bollywood" },
             { id: 16, name: "Bollywood Best Songs", slogan: "Best Bollywood Hits • 2010s • Non-Stop Music", location: "Internet", url: "https://nl4.mystreaming.net/uber/bollywood2010s/icecast.audio", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://yt3.googleusercontent.com/I-CghOFgqadXg_q2BIvsXfyEmlJDo5ZevM-IqINs0MVBHcHM56hZ88gsrHZdyDcIDACgBOjq=w544-c-h544-k-c0x00ffffff-no-l90-rj", category: "Bollywood" },
-            { id: 18, name: "All India Radio Live 1", slogan: "LIVE RADIO", location: "India", url: "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio002/hlspbaudio00264kbps.m3u8", color: "#00aaff", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/air_live.webp", category: "AIR" },
-            { id: 19, name: "Air FM Gold 2", slogan: "LIVE RADIO", location: "India", url: "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio00564kbps.m3u8", color: "#d4af37", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/fmgold.webp", category: "AIR" },
+            { id: 18, name: "All India Radio Live", slogan: "LIVE RADIO", location: "India", url: "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio002/hlspbaudio00264kbps.m3u8", color: "#00aaff", isPopular: true, isTrending: true, isFavorite: false, logo: "https://c.ndtvimg.com/2019-01/190mnkj8_all-india-radio-air_625x300_04_January_19.jpg", category: "AIR" },
+            { id: 19, name: "Air FM Gold", slogan: "LIVE RADIO", location: "India", url: "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio00564kbps.m3u8", color: "#d4af37", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/fmgold.webp", category: "AIR" },
             { id: 20, name: "Radio Air Rainbow", slogan: "दिल से दिल तक", location: "India", url: "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio004/hlspbaudio00432kbps.m3u8", color: "#8b5cf6", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/fm-rainbow.jpg", category: "AIR" },
             { id: 21, name: "AIR Indraprastha", slogan: "बहुजन हिताय, बहुजन सुखाय", location: "India", url: "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio006/hlspbaudio00664kbps.m3u8", color: "#ff6600", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/indrapastha.jpg", category: "AIR" },
             { id: 17, name: "Radio Saavan", slogan: "Hindi Music • Bollywood Hits • 24×7 Live", location: "Internet", url: "https://sp14.instainternet.com/8268/stream", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://radiosaavan.in/assets/img/logo.png", category: "Bollywood" }
@@ -1605,8 +1605,8 @@
                 userAvatarSeed = 'Unknown'; 
             }
 
-            localStorage.setItem('wavecast_username', userName);
-            localStorage.setItem('wavecast_avatar_seed', userAvatarSeed);
+            localStorage.setItem('harsh_it_username', userName);
+            localStorage.setItem('harsh_it_avatar_seed', userAvatarSeed);
 
             initPersonalizedTrending();
             renderLists();
@@ -2257,7 +2257,7 @@
         function applyView(viewName) {
             if (!views[viewName]) viewName = 'home';
 
-            if (viewName === 'profile' && !localStorage.getItem('wavecast_username')) {
+            if (viewName === 'profile' && !localStorage.getItem('harsh_it_username')) {
                 showOnboarding();
             }
 
