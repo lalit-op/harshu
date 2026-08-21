@@ -13,7 +13,7 @@
     <title>Live TV | Feather</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com" defer></script>
     
     <style>
         * { 
@@ -579,6 +579,51 @@
             background-image: none !important;
             background-color: #020617 !important;
         }
+
+        /* Fixed card sizing: keeps every phone card uniform even when channel names differ. */
+        .grid { align-items: stretch; grid-auto-rows: 116px; }
+        .card {
+            width: 100%;
+            height: 116px;
+            min-height: 116px;
+            max-height: 116px;
+            justify-content: flex-start;
+            overflow: hidden;
+        }
+        .card img { flex: 0 0 auto; }
+        .card h3 {
+            width: 100%;
+            line-height: 1.25;
+            min-height: 14px;
+        }
+        .card p { line-height: 1.2; }
+        .emoji-icon { flex: 0 0 auto; }
+        @media (min-width: 640px) {
+            .grid { grid-auto-rows: 140px; }
+            .card { height: 140px; min-height: 140px; max-height: 140px; }
+        }
+        @media (min-width: 1024px) {
+            .grid { grid-auto-rows: 158px; }
+            .card { height: 158px; min-height: 158px; max-height: 158px; }
+        }
+        @media (max-width: 350px) {
+            .grid { grid-auto-rows: 116px; }
+            .card { height: 116px; min-height: 116px; max-height: 116px; }
+        }
+
+        /* Performance mode: preserve the visual design while reducing GPU/compositing cost. */
+        .card { animation: none !important; }
+        .card, .chip, .action-btn-pill { will-change: auto; }
+        .card { content-visibility: auto; contain-intrinsic-size: 110px; }
+        @media (max-width: 767px) {
+            .card, .chip, .action-btn-pill, #playerSidebar, #fsSidebar {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+        }
     </style>
 </head>
 <body>
@@ -663,13 +708,7 @@
 <div id="toastMsg" class="toast"></div>
 
 <script>
-    // Overrides for standard blocking popups based on best practices
-    window.open = function() { console.warn("Popup blocked."); return null; };
-    window.alert = function() { console.warn("Alert blocked."); return false; };
-    window.confirm = function() { console.warn("Confirm blocked."); return false; };
-    window.prompt = function() { console.warn("Prompt blocked."); return null; };
-
-    const ua = navigator.userAgent;
+const ua = navigator.userAgent;
     const isSmartTV = /Tizen|Web0S|SmartTV|SMART-TV|Roku|AppleTV/i.test(ua);
     const isMobile = /Mobi|Android|iPhone|iPad/i.test(ua) && !isSmartTV;
     
@@ -702,7 +741,11 @@
         "Colors Rishtey", 
         "MTV HD"
     ];
-    let favorites = storedFavs !== null ? JSON.parse(storedFavs) : defaultFavs;
+    let favorites = defaultFavs.slice();
+    try {
+        const parsedFavs = storedFavs !== null ? JSON.parse(storedFavs) : null;
+        if (Array.isArray(parsedFavs)) favorites = parsedFavs;
+    } catch (e) {}
     
     // Migration: automatically swap Pal with Pal 2 for returning users
     const pal2Idx = favorites.indexOf("Sony Pal");
@@ -715,6 +758,49 @@
     let autoFsTimer;
     let isStreamPlaying = true;
     let isPseudoFullscreen = false;
+
+    // Performance settings
+    const INITIAL_RENDER_COUNT = 36;
+    const RENDER_BATCH_SIZE = 36;
+    let visibleRenderCount = INITIAL_RENDER_COUNT;
+    let currentFilteredChannels = [];
+    let renderObserver = null;
+    let dataCacheTimer = null;
+    const CHANNEL_CACHE_KEY = 'feather_channels_v3';
+    const CHANNEL_CACHE_TTL = 10 * 60 * 1000;
+    const PLACEHOLDER_IMG = 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><rect width="60" height="60" rx="10" fill="#000"/><text x="30" y="36" text-anchor="middle" font-size="18" fill="#fff">TV</text></svg>');
+
+    function escapeHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+
+    function channelKey(channel) {
+        return channel.name + '|' + channel.link;
+    }
+
+    function getFilteredChannels() {
+        if (activeCategory === 'Favorites') {
+            const byName = new Map(allChannels.map(c => [c.name, c]));
+            return favorites.map(name => byName.get(name)).filter(Boolean);
+        }
+        return allChannels.filter(c => activeCategory === 'All' || c.genre === activeCategory);
+    }
+
+    function setupGridObserver() {
+        if (renderObserver) renderObserver.disconnect();
+        const sentinel = document.getElementById('gridSentinel');
+        if (!sentinel || !('IntersectionObserver' in window)) return;
+        renderObserver = new IntersectionObserver(entries => {
+            if (entries.some(e => e.isIntersecting)) {
+                if (visibleRenderCount < currentFilteredChannels.length) {
+                    visibleRenderCount += RENDER_BATCH_SIZE;
+                    renderGrid(false);
+                }
+            }
+        }, { root: appContainer, rootMargin: '700px 0px' });
+        renderObserver.observe(sentinel);
+    }
+
 
     function getFullscreenElement() {
         return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
@@ -745,12 +831,12 @@
             isPseudoFullscreen = true;
             updateFullscreenUI();
         } else {
+            isPseudoFullscreen = false;
             safeRequestFullscreen(videoWrapper, () => {
                 videoWrapper.classList.add("mobile-fullscreen");
                 isPseudoFullscreen = true;
                 updateFullscreenUI();
             });
-            isPseudoFullscreen = false;
         }
     }
 
@@ -812,14 +898,30 @@
     };
 
     async function fetchData() {
+        // Show cached channels immediately, then refresh in the background.
         try {
-            const response = await fetch(DATA_URL);
-            if (!response.ok) throw new Error("Net Error");
+            const cached = localStorage.getItem(CHANNEL_CACHE_KEY);
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (Array.isArray(parsed.data) && parsed.data.length) {
+                    processChannels(parsed.data);
+                    if (Date.now() - parsed.time < CHANNEL_CACHE_TTL) return;
+                }
+            }
+        } catch (e) {}
+
+        try {
+            const response = await fetch(DATA_URL, { cache: 'force-cache' });
+            if (!response.ok) throw new Error('Network error');
             const rawData = await response.json();
             const channelArray = Array.isArray(rawData) ? rawData : (rawData.result || rawData.channels || []);
+            if (!Array.isArray(channelArray) || !channelArray.length) throw new Error('Empty channel list');
+            try {
+                localStorage.setItem(CHANNEL_CACHE_KEY, JSON.stringify({ time: Date.now(), data: channelArray }));
+            } catch (e) {}
             processChannels(channelArray);
         } catch (error) {
-            loadFallbackData();
+            if (!allChannels.length) loadFallbackData();
         }
     }
 
@@ -830,7 +932,7 @@
 
         let processed = data.map(ch => {
             let chanName = ch.channel_name || ch.name || 'Unknown';
-            let imgUrl = ch.logoUrl || ch.image || 'https://via.placeholder.com/130x130.png?text=TV';
+            let imgUrl = ch.logoUrl || ch.image || PLACEHOLDER_IMG;
             let linkUrl = `https://momixtv-jiotv.pages.dev/jioplayer.html?id=${ch.channel_id || ch.id || ''}`;
             let genreName = ch.category_name || ch.category || 'General';
 
@@ -867,7 +969,7 @@
             if (chanName.toLowerCase().includes('super hungama') || chanName.toLowerCase().includes('hungama super')) { chanName = 'Hungama Super'; linkUrl = 'https://jtvxweb.pages.dev/pind?id=1392'; }
             if (chanName.toLowerCase().includes('sony yay')) { linkUrl = 'https://jtvxweb.pages.dev/pind?id=872'; imgUrl = 'https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyYAYHin.png'; genreName = 'Kids'; }
             if (chanName.toLowerCase().includes('star sports 2')) { chanName = 'Star Sports 2'; linkUrl = 'https://jtvxweb.pages.dev/pind?id=1984'; imgUrl = 'https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Sports_2.png'; genreName = 'Sports'; }
-            if (chanName.toLowerCase().includes('sab hd 2') linkUrl = 'https://allinonereborn2.online/sony/ptest1.html?id=sab-hd';
+            if (chanName.toLowerCase().includes('sab hd 2')) linkUrl = 'https://allinonereborn2.online/sony/ptest1.html?id=sab-hd';
             if (chanName.toLowerCase().includes('sony yay 2')) linkUrl = 'https://allinonereborn2.online/sony/ptest1.html?id=sony-yay';
             
             if (chanName.toLowerCase() === 'set sd' || chanName.toLowerCase() === 'sony entertainment television' || chanName.toLowerCase() === 'set') imgUrl = 'https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_SD.png';
@@ -954,9 +1056,9 @@
             { name: "Travel XP", link: "https://jtvxweb.pages.dev/pind?id=562", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Travel_XP_HD.png", genre: "Info" },
             { name: "Aaj Tak", link: "https://jtvxweb.pages.dev/pind?id=173", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Aaj_Tak.png", genre: "News" },
             { name: "DD News", link: "https://jtvxweb.pages.dev/pind?id=203", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/DD_News.png", genre: "News" },
-            { name: "Star Sports 2", link: "https://jtvxweb.pages.dev/pind?id=1984", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Sports_2.png", genre: "Sports" }
+            { name: "Star Sports 2", link: "https://jtvxweb.pages.dev/pind?id=1984", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Sports_2.png", genre: "Sports" },
             { name: "Sony SAB HD 2", link: "https://allinonereborn2.online/sony/ptest1.html?id=sab-hd", image: "https://jiotvimages.cdn.jio.com/dare_images/images/Sony_SAB_HD.png", genre: "Fun-Ment" },
-            { name: "Sony YAY 2", link: "https://allinonereborn2.online/sony/ptest1.html?id=sony-yay", image: "YOUR_SONY_YAY_IMAGE_URL", genre: "Kids" },
+            { name: "Sony YAY 2", link: "https://allinonereborn2.online/sony/ptest1.html?id=sony-yay", image: "https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyYAYHin.png", genre: "Kids" },
         ];
 
         allChannels = fallbackData.map(ch => {
@@ -1113,7 +1215,8 @@
         
         const card = e.target.closest('.card:not(.app-card)');
         if (card) {
-            openStream(card.dataset.link, card.dataset.name);
+            const channel = allChannels[Number(card.dataset.channelIndex)];
+            if (channel) openStream(channel.link, channel.name);
         }
     }, { passive: false });
 
@@ -1122,14 +1225,18 @@
             const card = e.target.closest('.card:not(.app-card)');
             if (card) {
                 e.preventDefault();
-                openStream(card.dataset.link, card.dataset.name);
+                const channel = allChannels[Number(card.dataset.channelIndex)];
+                if (channel) openStream(channel.link, channel.name);
             }
         }
     }, { passive: false });
 
     sidebarList.addEventListener('click', (e) => {
         const item = e.target.closest('.yt-list-item');
-        if (item) openStream(item.dataset.link, item.dataset.name);
+        if (item) {
+            const channel = allChannels[Number(item.dataset.channelIndex)];
+            if (channel) openStream(channel.link, channel.name);
+        }
     }, { passive: true });
 
     sidebarList.addEventListener('keydown', (e) => {
@@ -1137,7 +1244,8 @@
             const item = e.target.closest('.yt-list-item');
             if (item) {
                 e.preventDefault();
-                openStream(item.dataset.link, item.dataset.name);
+                const channel = allChannels[Number(item.dataset.channelIndex)];
+                if (channel) openStream(channel.link, channel.name);
             }
         }
     }, { passive: false });
@@ -1147,7 +1255,8 @@
         fsSidebarList.addEventListener('click', (e) => {
             const item = e.target.closest('.yt-list-item');
             if (item) {
-                openStream(item.dataset.link, item.dataset.name);
+                const channel = allChannels[Number(item.dataset.channelIndex)];
+                if (channel) openStream(channel.link, channel.name);
                 toggleFsSidebar(); 
             }
         }, { passive: true });
@@ -1157,11 +1266,27 @@
                 const item = e.target.closest('.yt-list-item');
                 if (item) {
                     e.preventDefault();
-                    openStream(item.dataset.link, item.dataset.name);
+                    const channel = allChannels[Number(item.dataset.channelIndex)];
+                if (channel) openStream(channel.link, channel.name);
                     toggleFsSidebar(); 
                 }
             }
         }, { passive: false });
+    }
+
+    let dashLoaderPromise = null;
+    function loadDashJs() {
+        if (window.dashjs) return Promise.resolve(window.dashjs);
+        if (dashLoaderPromise) return dashLoaderPromise;
+        dashLoaderPromise = new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdn.dashjs.org/latest/dash.all.min.js';
+            script.async = true;
+            script.onload = () => resolve(window.dashjs);
+            script.onerror = reject;
+            document.head.appendChild(script);
+        });
+        return dashLoaderPromise;
     }
 
     function openStream(url, name, fromHash = false) {
@@ -1179,12 +1304,11 @@
                        style="width:100%;height:100%;background:#000;outline:none;">
                 </video>
             `;
-            try {
-                const player = dashjs.MediaPlayer().create();
-                player.initialize(document.getElementById("playerVideo"), url, true);
-            } catch(e) {
-                console.error("Dash.js setup failed:", e);
-            }
+            loadDashJs().then(dash => {
+                if (!dash || !document.getElementById('playerVideo')) return;
+                const player = dash.MediaPlayer().create();
+                player.initialize(document.getElementById('playerVideo'), url, true);
+            }).catch(e => console.error('Dash.js setup failed:', e));
         } else {
             let finalUrl = url.includes('?') ? url + '&autoplay=1&mute=1' : url + '?autoplay=1&mute=1';
 
@@ -1301,15 +1425,17 @@
         filteredList.forEach(c => {
             const isActive = c.name === activeChannelName;
             const activeClasses = isActive ? 'active' : '';
-            const safeName = c.name.replace(/"/g, '&quot;');
+            const channelIndex = allChannels.indexOf(c);
+            const safeName = escapeHtml(c.name);
+            const safeImage = escapeHtml(c.image);
             
             html += `
-                <div class="yt-list-item group ${activeClasses}" tabindex="0" data-link="${c.link}" data-name="${safeName}">
+                <div class="yt-list-item group ${activeClasses}" tabindex="0" data-channel-index="${channelIndex}" data-name="${safeName}">
                     <div class="flex items-center gap-3">
-                        <img src="${c.image}" decoding="async" loading="lazy" width="38" height="38" onerror="this.src='https://via.placeholder.com/50x50/000000/ffffff?text=TV'">
+                        <img src="${safeImage}" decoding="async" loading="lazy" width="38" height="38" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'">
                         <div class="flex flex-col">
-                            <span class="text-[12px] font-semibold text-slate-200 group-hover:text-white transition-colors truncate max-w-[130px]">${c.name}</span>
-                            <span class="text-[8px] text-slate-400 uppercase font-medium mt-0.5">${c.genre}</span>
+                            <span class="text-[12px] font-semibold text-slate-200 group-hover:text-white transition-colors truncate max-w-[130px]">${safeName}</span>
+                            <span class="text-[8px] text-slate-400 uppercase font-medium mt-0.5">${escapeHtml(c.genre)}</span>
                         </div>
                     </div>
                     <div class="active-dot"></div>
@@ -1353,66 +1479,60 @@
         }
     }
 
-    function renderGrid() {
-        let filtered = [];
-        if (activeCategory === 'Favorites') {
-            favorites.forEach(favName => {
-                const chan = allChannels.find(c => c.name === favName);
-                if (chan) filtered.push(chan);
-            });
-        } else {
-            filtered = allChannels.filter(c => activeCategory === 'All' || c.genre === activeCategory);
-        }
+    function renderGrid(reset = true) {
+        if (reset) visibleRenderCount = INITIAL_RENDER_COUNT;
+        currentFilteredChannels = getFilteredChannels();
 
-        if (filtered.length === 0) {
-            grid.innerHTML = activeCategory === 'Favorites' ? 
-                '<div class="msg">No Favs yet. Tap the heart on a channel to save it!</div>' : 
-                '<div class="msg">No channels found.</div>';
+        if (currentFilteredChannels.length === 0) {
+            if (renderObserver) renderObserver.disconnect();
+            grid.innerHTML = activeCategory === 'Favorites'
+                ? '<div class="msg">No Favs yet. Tap the heart on a channel to save it!</div>'
+                : '<div class="msg">No channels found.</div>';
             return;
         }
 
+        const visible = currentFilteredChannels.slice(0, visibleRenderCount);
+        const fragment = document.createDocumentFragment();
+        const temp = document.createElement('div');
         let html = '';
-        filtered.forEach((c, index) => {
+
+        visible.forEach((c, index) => {
+            const channelIndex = allChannels.indexOf(c);
             const isFav = favorites.includes(c.name);
-            const safeName = c.name.replace(/"/g, '&quot;');
-            
-            const animDelay = Math.min(index * 0.05, 0.5) + 's';
-            
-            const favBtnHtml = isMobile ? `
-                    <button class="fav-btn" tabindex="-1">
-                        ${isFav ? '❤️' : '🤍'}
-                    </button>` : '';
-            
+            const safeName = escapeHtml(c.name);
+            const favBtnHtml = isMobile ? `<button class="fav-btn" tabindex="-1" aria-label="Favorite">${isFav ? '❤️' : '🤍'}</button>` : '';
             html += `
-                <div class="card" tabindex="0" data-link="${c.link}" data-name="${safeName}" style="animation-delay: ${animDelay}">
+                <div class="card" tabindex="0" data-channel-index="${channelIndex}" data-name="${safeName}">
                     ${favBtnHtml}
                     <div class="live">LIVE</div>
-                    <img src="${c.image}" decoding="async" loading="lazy" width="46" height="46" onerror="this.src='https://via.placeholder.com/60x60/000000/ffffff?text=TV'">
-                    <h3>${c.name}</h3>
-                    <p>${c.genre}</p>
-                </div>
-            `;
+                    <img src="${escapeHtml(c.image)}" decoding="async" loading="lazy" width="46" height="46" fetchpriority="low" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'">
+                    <h3>${safeName}</h3>
+                    <p>${escapeHtml(c.genre)}</p>
+                </div>`;
         });
 
         if (activeCategory === 'All') {
-            infinityApps.forEach((app, index) => {
-                const animDelay = Math.min((filtered.length + index) * 0.05, 0.5) + 's';
+            infinityApps.forEach(app => {
                 html += `
-                    <a href="${app.url}" target="_blank" class="card app-card" style="background: ${app.grad}; justify-content: center; padding-top: 18px; animation-delay: ${animDelay}" tabindex="0">
+                    <a href="${escapeHtml(app.url)}" target="_blank" rel="noopener noreferrer" class="card app-card" style="background:${app.grad};justify-content:center;padding-top:18px" tabindex="0">
                         <div class="emoji-icon">${app.icon}</div>
-                        <h3 style="color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.5); font-size: 11px;">${app.name}</h3>
-                        <p style="color: rgba(255,255,255,0.8);">APP</p>
-                    </a>
-                `;
+                        <h3 style="color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);font-size:11px">${escapeHtml(app.name)}</h3>
+                        <p style="color:rgba(255,255,255,.8)">APP</p>
+                    </a>`;
             });
         }
 
-        grid.innerHTML = html;
+        // A tiny sentinel lets IntersectionObserver request the next batch.
+        html += '<div id="gridSentinel" aria-hidden="true" style="grid-column:1/-1;height:1px"></div>';
+        temp.innerHTML = html;
+        fragment.append(...temp.children);
+        grid.replaceChildren(fragment);
+        setupGridObserver();
     }
 
     function showToast(msg) {
         let toast = document.getElementById('toastMsg');
-        toast.innerHTML = msg;
+        toast.textContent = msg;
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
@@ -1541,15 +1661,14 @@
         }
     }, true); 
 
-    window.onload = () => {
-        fetchData();
+    fetchData();
+    window.addEventListener('load', () => {
         setTimeout(() => {
             const firstCat = document.querySelector('.chip');
-            if(firstCat && isSmartTV) firstCat.focus();
-        }, 1000);
-    };
+            if (firstCat && isSmartTV) firstCat.focus();
+        }, 300);
+    }, { once: true, passive: true });
 </script>
 
-<script src="https://cdn.dashjs.org/latest/dash.all.min.js" async></script>
 </body>
 </html>
