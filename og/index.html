@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#020617">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://raw.githubusercontent.com">
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<link rel="preconnect" href="https://jtvxweb.pages.dev">
+<title>Live TV | Feather</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📺</text></svg>">
+<script src="https://cdn.tailwindcss.com" defer></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation;scrollbar-width:none}
+*::-webkit-scrollbar{display:none}
+body{background-color:#020617;background-image:radial-gradient(at 0% 0%,rgba(30,27,75,.4) 0,transparent 50%),radial-gradient(at 100% 0%,rgba(14,165,233,.15) 0,transparent 50%),radial-gradient(at 100% 100%,rgba(225,29,72,.1) 0,transparent 50%);background-attachment:fixed;color:#fff;font-family:ui-sans-serif,system-ui,-apple-system,sans-serif;margin:0;overflow-x:hidden;user-select:none;height:100vh;min-height:100dvh;display:flex;flex-direction:column;overscroll-behavior-y:none}
+:focus{outline:none}:focus-visible{outline:3px solid #0ea5e9;outline-offset:2px;z-index:10;border-color:transparent!important}
+a{text-decoration:none;color:inherit}
+#appContainer{padding:0 calc(env(safe-area-inset-right,0px) + 7px) 0 calc(env(safe-area-inset-left,0px) + 7px);flex-grow:1;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sticky-header{position:sticky;top:0;z-index:30;background:rgba(2,6,23,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding-top:calc(env(safe-area-inset-top,12px) + 7px);margin:0 -7px 8px;padding-bottom:4px}
+.cats{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 16px;margin:0 -16px 4px;flex-shrink:0;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(to right,transparent,black 16px,black calc(100% - 16px),transparent);-webkit-mask-image:linear-gradient(to right,transparent,black 16px,black calc(100% - 16px),transparent)}
+.chip{background:rgba(30,41,59,.4);border:1px solid rgba(255,255,255,.08);padding:10px 22px;border-radius:9999px;font-size:13px;font-weight:600;color:#cbd5e1;cursor:pointer;white-space:nowrap;transition:all .3s;display:flex;align-items:center;gap:6px}
+.chip:active{transform:scale(.92)}.chip.active{background:linear-gradient(135deg,rgba(236,72,153,.85),rgba(99,102,241,.85));color:#fff;border-color:rgba(255,255,255,.3);box-shadow:0 8px 25px rgba(99,102,241,.4);transform:scale(1.05)}
+.chip.backup-btn{background:rgba(15,23,42,.4);color:#94a3b8;border-style:dashed}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:4px 8px calc(80px + env(safe-area-inset-bottom,0px));align-items:stretch;grid-auto-rows:116px}
+@media(max-width:350px){.grid{grid-template-columns:repeat(2,1fr);gap:8px;grid-auto-rows:116px}}
+@media(min-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:14px;grid-auto-rows:140px}}
+@media(min-width:1024px){.grid{grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:16px;grid-auto-rows:158px}}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:14px 6px 10px;text-align:center;position:relative;display:flex;flex-direction:column;cursor:pointer;transition:all .25s;box-shadow:0 4px 15px rgba(0,0,0,.2);contain:layout style paint;content-visibility:auto;contain-intrinsic-size:110px;width:100%;height:116px;min-height:116px;max-height:116px;justify-content:flex-start;overflow:hidden}
+.card:active{transform:scale(.92)}.card>*:not(.fav-btn){pointer-events:none}
+.card img{width:46px;height:46px;border-radius:50%;background:#000;object-fit:contain;margin:0 auto 8px;flex:0 0 auto}
+.card h3{font-size:11px;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;line-height:1.25;min-height:14px}
+.card p{font-size:9px;color:#888;margin:0;text-transform:uppercase;line-height:1.2}
+.live{position:absolute;top:4px;right:4px;background:#c00;color:#fff;font-size:7px;padding:2px 4px;border-radius:4px;font-weight:bold}
+.fav-btn{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.1);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:13px;z-index:5;cursor:pointer;pointer-events:auto}
+@media(min-width:640px){.card{height:140px;min-height:140px;max-height:140px;padding:12px}.card img{width:55px;height:55px}.card h3{font-size:12px}.card p{font-size:10px}}
+@media(min-width:1024px){.card{height:158px;min-height:158px;max-height:158px;padding:14px}.card img{width:65px;height:65px}.card h3{font-size:14px}.card p{font-size:11px}}
+@media(min-width:768px){.fav-btn,.backup-btn{display:none!important}}
+.msg{grid-column:1/-1;text-align:center;padding:30px;color:#777}
+.toast{position:fixed;bottom:max(20px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#fff;color:#000;padding:12px 24px;border-radius:20px;font-size:14px;font-weight:bold;opacity:0;z-index:99;pointer-events:none;transition:opacity .3s}.toast.show{opacity:1}
+#playerContainer{background:#000;will-change:transform,opacity}
+.player-top-bar{background:transparent;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:12px}
+.action-btn-pill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.08);padding:8px 18px;border-radius:9999px;font-size:14px;font-weight:600;color:#f8fafc;display:flex;align-items:center;gap:8px;cursor:pointer}
+.fs-btn-pill{background:linear-gradient(90deg,#9333ea,#06b6d4);padding:10px 24px;font-size:13px;color:#fff;font-weight:700;border:0}
+#playerSidebar{background:linear-gradient(180deg,rgba(60,25,30,.7),rgba(20,20,24,.9) 50%,#0f0f12);border:1px solid rgba(255,255,255,.03);border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,.5);overflow:hidden;display:flex;flex-direction:column}
+.sidebar-title{background:linear-gradient(90deg,#38bdf8,#818cf8,#e879f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.yt-list-item{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;margin:3px 10px;border-radius:12px;cursor:pointer;border:1px solid transparent}
+.yt-list-item.active{background:rgba(255,255,255,.08)}.yt-list-item img{width:38px;height:38px;border-radius:50%;background:#000;object-fit:contain;flex-shrink:0}
+.active-dot{width:6px;height:6px;background:#ef4444;border-radius:50%;display:none;box-shadow:0 0 8px #ef4444}.yt-list-item.active .active-dot{display:block}
+#videoWrapper{background:#000;position:relative;z-index:40;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.05);transform:translateZ(0)}
+#playerIframe,#playerVideo{width:100%;height:100%;border:none;display:block}
+.player-content-area{display:flex;flex-direction:column;gap:16px;padding:0 16px 16px;flex-grow:1;overflow:hidden}
+.mobile-fullscreen{position:fixed!important;inset:0!important;width:100vw!important;height:100vh!important;min-height:100dvh!important;z-index:999999!important;background:#000!important;border-radius:0!important;border:0!important;margin:0!important;padding:0!important}
+@media(max-width:1023px){.player-top-bar{position:relative;background:#020617;padding:max(env(safe-area-inset-top,12px),12px) 16px 12px;z-index:50;box-shadow:0 4px 15px rgba(0,0,0,.4)}.player-content-area{padding:0;position:relative;flex-direction:column}#videoWrapper{position:sticky;top:0;z-index:45;width:100%;aspect-ratio:16/9;height:auto;order:1;flex-shrink:0;border-radius:0;border:0;border-bottom:1px solid rgba(255,255,255,.1)}#playerSidebar{display:flex;order:2;flex:1;width:100%;border-radius:0;border:0;background:transparent;box-shadow:none;padding-bottom:env(safe-area-inset-bottom,0px)}}
+@media(min-width:1024px){.player-content-area{flex-direction:row;padding:0 24px 24px;gap:24px}#playerSidebar{width:280px;order:1;flex-shrink:0}#videoWrapper{flex-grow:1;order:2;height:100%}}
+#videoWrapper:fullscreen,#videoWrapper:-webkit-full-screen{border-radius:0!important;border:none!important}
+#videoWrapper:fullscreen #playerIframe,#videoWrapper:-webkit-full-screen #playerIframe,#videoWrapper:fullscreen #playerVideo,#videoWrapper:-webkit-full-screen #playerVideo{border-radius:0!important}
+body.tv-mode{background-image:none!important;background-color:#020617!important}body.tv-mode *{transition-duration:.05s!important}body.tv-mode :focus{outline:4px solid #0ea5e9!important;outline-offset:-2px!important;background-color:#1e293b!important;transform:scale(1.05) translateZ(0)!important;z-index:50!important;box-shadow:none!important}body.tv-mode .chip:focus{background:#fff!important;color:#000}
+@media(max-width:767px){.card,.chip,.action-btn-pill,#playerSidebar,#fsSidebar{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div id="appContainer">
+<div class="sticky-header"><div class="cats w-full" id="categoryContainer" role="tablist"></div></div>
+<div class="grid" id="channelGrid"><div class="msg">Loading Channels...</div></div>
+</div>
+
+<div id="playerContainer" class="fixed inset-0 z-[100] hidden flex-col h-[100vh] min-h-[100dvh]">
+<div class="player-top-bar">
+<div class="flex-1 flex justify-start"><button onclick="closePlayer()" class="action-btn-pill min-w-[90px]" tabindex="0" title="Go Back">← <span>Back</span></button></div>
+<div class="flex items-center justify-center gap-2">
+<button id="playPauseBtn" onclick="togglePlayPause()" class="action-btn-pill" style="padding:10px 14px" title="Pause">Ⅱ</button>
+<button onclick="togglePlayerFullscreen()" class="action-btn-pill fs-btn-pill">⛶ <span class="hidden sm:inline">FULL SCREEN</span></button>
+</div><div class="flex-1"></div>
+</div>
+<div class="player-content-area">
+<div id="playerSidebar"><div class="p-5 pb-2"><h2 id="sidebarCategoryTitle" class="sidebar-title">ALL CHANNELS</h2></div><div id="sidebarList" class="flex-1 overflow-y-auto pb-4"></div></div>
+<div id="videoWrapper"><div id="mediaContainer" class="w-full h-full"></div>
+<div id="fsOverlay" class="absolute inset-0 pointer-events-none z-[99999]" style="display:none">
+<div class="absolute left-4 top-4 pointer-events-auto z-[65]"><button onclick="toggleFsSidebar()" class="bg-black/60 text-white p-3 rounded-xl border border-white/20">☰</button></div>
+<div id="fsSidebar" class="absolute left-0 top-0 bottom-0 w-[260px] max-w-[80vw] bg-slate-900/95 border-r border-white/10 transform -translate-x-full transition-transform duration-300 flex flex-col pointer-events-auto shadow-2xl z-[70]">
+<div class="p-4 flex justify-between items-center border-b border-white/10"><span class="text-white font-bold text-xs tracking-widest">LIVE CHANNELS</span><button onclick="toggleFsSidebar()" class="text-slate-400 p-2">✕</button></div>
+<div id="fsSidebarList" class="flex-1 overflow-y-auto pb-4"></div>
+</div></div>
+</div></div>
+</div>
+<div id="toastMsg" class="toast"></div>
+
+<script>
+const ua=navigator.userAgent,isSmartTV=/Tizen|Web0S|SmartTV|SMART-TV|Roku|AppleTV/i.test(ua),isMobile=/Mobi|Android|iPhone|iPad/i.test(ua)&&!isSmartTV;
+if(isSmartTV)document.body.classList.add('tv-mode');
+
+const grid=document.getElementById('channelGrid'),categoryContainer=document.getElementById('categoryContainer'),appContainer=document.getElementById('appContainer'),playerContainer=document.getElementById('playerContainer'),videoWrapper=document.getElementById('videoWrapper'),sidebarList=document.getElementById('sidebarList');
+let allChannels=[],activeCategory=window.location.hash?decodeURIComponent(window.location.hash.substring(1).split('/')[0]):'All',genres=new Set();
+let defaultFavs=["Sony SAB SD","Sony Pal 2","Disney Channel","Hungama TV","Sony Yay","Hungama Super","Sony SAB HD","Colors HD","Colors Rishtey","MTV HD"],favorites=defaultFavs.slice();
+try{const p=localStorage.getItem('tvFavsV2');if(p!==null){const a=JSON.parse(p);if(Array.isArray(a))favorites=a}}catch(e){}
+const pal2Idx=favorites.indexOf("Sony Pal");if(pal2Idx!==-1){favorites[pal2Idx]="Sony Pal 2";localStorage.setItem('tvFavsV2',JSON.stringify(favorites))}
+let isAutoFS=isMobile?false:(localStorage.getItem('tvAutoFS')!=='false'),autoFsTimer,isStreamPlaying=true,isPseudoFullscreen=false;
+const INITIAL_RENDER_COUNT=36,RENDER_BATCH_SIZE=36;let visibleRenderCount=INITIAL_RENDER_COUNT,currentFilteredChannels=[],renderObserver=null;
+const CHANNEL_CACHE_KEY='feather_channels_v3',CHANNEL_CACHE_TTL=10*60*1000;
+const PLACEHOLDER_IMG='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><rect width="60" height="60" rx="10" fill="#000"/><text x="30" y="36" text-anchor="middle" font-size="18" fill="#fff">TV</text></svg>');
+
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function getFilteredChannels(){if(activeCategory==='Favorites'){const m=new Map(allChannels.map(c=>[c.name,c]));return favorites.map(n=>m.get(n)).filter(Boolean)}return allChannels.filter(c=>activeCategory==='All'||c.genre===activeCategory)}
+function setupGridObserver(){if(renderObserver)renderObserver.disconnect();const s=document.getElementById('gridSentinel');if(!s||!('IntersectionObserver'in window))return;renderObserver=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)&&visibleRenderCount<currentFilteredChannels.length){visibleRenderCount+=RENDER_BATCH_SIZE;renderGrid(false)}},{root:appContainer,rootMargin:'700px 0px'});renderObserver.observe(s)}
+function getFullscreenElement(){return document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement}
+function applyLandscapeLock(){if(isMobile){try{if(screen.orientation?.lock)screen.orientation.lock('landscape').catch(()=>{});else if(screen.lockOrientation)screen.lockOrientation('landscape');}catch(e){}}}
+function enterFullscreenLogic(){const ios=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;if(isMobile&&ios){videoWrapper.classList.add('mobile-fullscreen');isPseudoFullscreen=true;updateFullscreenUI()}else{isPseudoFullscreen=false;safeRequestFullscreen(videoWrapper,()=>{videoWrapper.classList.add('mobile-fullscreen');isPseudoFullscreen=true;updateFullscreenUI()})}}
+function exitFullscreenLogic(){if(isMobile){videoWrapper.classList.remove('mobile-fullscreen');isPseudoFullscreen=false;updateFullscreenUI()}else document.exitFullscreen?.()}
+function togglePlayerFullscreen(){if(getFullscreenElement()||isPseudoFullscreen)exitFullscreenLogic();else enterFullscreenLogic()}
+
+const importFavs=new URLSearchParams(location.search).get('favs');
+if(importFavs){try{const x=JSON.parse(decodeURIComponent(importFavs));if(Array.isArray(x)){x.forEach(f=>{if(!favorites.includes(f))favorites.push(f)});localStorage.setItem('tvFavsV2',JSON.stringify(favorites));setTimeout(()=>showToast('Imported favorites!'),1000)}}catch(e){}history.replaceState({},document.title,location.pathname)}
+
+const DATA_URL='./channels.json';
+
+const infinityApps=[
+{name:"GDL TV ✅",url:"https://play.freeforall.dev",icon:"📡",grad:"linear-gradient(135deg,#f43f5e,#8b5cf6)"},
+{name:"Momix",url:"https://momixtv-jiotv.pages.dev/",icon:"💎",grad:"linear-gradient(135deg,#0ea5e9,#6366f1)"},
+{name:"All ✅",url:"https://allinonelivetv.pages.dev/",icon:"⚡",grad:"linear-gradient(135deg,#f59e0b,#ef4444)"},
+{name:"Netflix ✅",url:"https://skyflixer.fun/browse",icon:"🍿",grad:"linear-gradient(135deg,#10b981,#3b82f6)"},
+{name:"JioTV Plus",url:"https://jiotvplusindia.blogspot.com/?m=1",icon:"🌐",grad:"linear-gradient(135deg,#ec4899,#f43f5e)"},
+{name:"Jio-Web",url:"https://iptvportal.liveblog365.com/Webs/jiowebx/?i=1",icon:"🖥️",grad:"linear-gradient(135deg,#8b5cf6,#3b82f6)"},
+{name:"Jio TV ✅",url:"https://jjtvxweb.pages.dev/",icon:"🖥️",grad:"linear-gradient(135deg,#8b5cf6,#3b82f6)"}
+];
+const categoryIcons={All:'📺',Favorites:'❤️','Fun-Ment':'🎭',Movies:'🎬',Kids:'🧸',Info:'🌎',News:'📰',Sports:'⚽',Music:'🎵',Regional:'🌍'};
+
+async function fetchData(){
+ try{const cached=localStorage.getItem(CHANNEL_CACHE_KEY);if(cached){const p=JSON.parse(cached);if(Array.isArray(p.data)&&p.data.length){processChannels(p.data);if(Date.now()-p.time<CHANNEL_CACHE_TTL)return}}}catch(e){}
+ try{const r=await fetch(DATA_URL,{cache:'no-store'});if(!r.ok)throw Error('Network error');const raw=await r.json(),arr=Array.isArray(raw)?raw:(raw.result||raw.channels||[]);if(!Array.isArray(arr)||!arr.length)throw Error('Empty');try{localStorage.setItem(CHANNEL_CACHE_KEY,JSON.stringify({time:Date.now(),data:arr}))}catch(e){}processChannels(arr)}catch(e){if(!allChannels.length)loadFallbackData()}
+}
+
+function processChannels(data){
+ genres.clear();genres.add('All');genres.add('Favorites');
+ const processed=data.map(ch=>{
+  let chanName=ch.channel_name||ch.name||'Unknown',imgUrl=ch.logoUrl||ch.image||PLACEHOLDER_IMG,linkUrl=`https://momixtv-jiotv.pages.dev/jioplayer.html?id=${ch.channel_id||ch.id||''}`,genreName=ch.category_name||ch.category||'General',n=chanName.toLowerCase();
+  if(n.includes('sony sab sd')||n.includes('sab tv sd')||n==='sab sd'){chanName='Sony SAB SD';imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_SAB.png';linkUrl='https://jtvxweb.pages.dev/pind?id=154'}
+  else if(n.includes('sony sab')||n.includes('sab tv')||n==='sab'){chanName='Sony SAB HD';imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_SAB.png';linkUrl='https://jtvxweb.pages.dev/pind?id=471'}
+  if(n==='colors tv'||n==='colors'||n==='colors hd'){chanName='Colors HD';imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Colors_HD.png';linkUrl='https://jtvxweb.pages.dev/pind?id=144'}
+  if(n.includes('tlc'))linkUrl='https://jtvxweb.pages.dev/pind?id=3458';
+  if(n.includes('nat geo wild')||n==='nat geo'||n.includes('national geographic'))linkUrl='https://jtvxweb.pages.dev/pind?id=1332';
+  if(n.includes('history tv'))linkUrl='https://jtvxweb.pages.dev/pind?id=146';
+  if(n.includes('travel xp'))linkUrl='https://jtvxweb.pages.dev/pind?id=562';
+  if(n.includes('aaj tak'))linkUrl='https://jtvxweb.pages.dev/pind?id=173';
+  if(n.includes('dd news'))linkUrl='https://jtvxweb.pages.dev/pind?id=203';
+  if(n.includes('rishtey')){chanName='Colors Rishtey';linkUrl='https://jtvxweb.pages.dev/pind?id=279'}
+  if(n.includes('and tv')||n.includes('& tv'))linkUrl='https://jtvxweb.pages.dev/pind?id=472';
+  if(n==='sony pal'||n==='sonypal'){chanName='Sony Pal';linkUrl='https://gdl-live-tv.pages.dev/watch?ch=sony-pal'}
+  if(n.includes('star plus'))linkUrl='https://jtvxweb.pages.dev/pind?id=1132';
+  if(n.includes('mtv')){chanName='MTV HD';linkUrl='https://jtvxweb.pages.dev/pind?id=1145'}
+  if(n.includes('zee tv'))linkUrl='https://jtvxweb.pages.dev/pind?id=167';
+  if(n==='set sd'||n==='sony entertainment television'||n==='set')linkUrl='https://jtvxweb.pages.dev/pind?id=291';
+  if(n.includes('big magic'))linkUrl='https://jtvxweb.pages.dev/pind?id=1359';
+  if(n.includes('cartoon network')||n==='cn')linkUrl='https://jtvxweb.pages.dev/pind?id=816';
+  if(n==='star gold')linkUrl='https://jtvxweb.pages.dev/pind?id=156';
+  if(n.includes('star gold 2'))linkUrl='https://jtvxweb.pages.dev/pind?id=3096';
+  if(n.includes('star gold romance'))linkUrl='https://jtvxweb.pages.dev/pind?id=3097';
+  if(n.includes('star gold thrills'))linkUrl='https://jtvxweb.pages.dev/pind?id=3098';
+  if(n.includes('sony max'))linkUrl='https://jtvxweb.pages.dev/pind?id=476';
+  if(n.includes('zee cinema'))linkUrl='https://jtvxweb.pages.dev/pind?id=165';
+  if(n.includes('& pictures')||n.includes('and pictures'))linkUrl='https://allinonereborn2.online/zee5/player.php?mpd=https%3A%2F%2Fd1g8wgjurz8via.cloudfront.net%2Fbpk-tv%2FAndpictures%2Fdefault%2Fmanifest.mpd&keyid=8dea532cabfe4f71ba20f62310e7949f&key=7a214a974e4f4d1d9bb66364d5f0cb92';
+  if(n.includes('disney')){chanName='Disney Channel';linkUrl='https://jtvxweb.pages.dev/pind?id=1373'}
+  if(n==='hungama'||n==='hungama tv'){chanName='Hungama TV';linkUrl='https://jtvxweb.pages.dev/pind?id=1391'}
+  if(n.includes('super hungama')||n.includes('hungama super')){chanName='Hungama Super';linkUrl='https://jtvxweb.pages.dev/pind?id=1392'}
+  if(n.includes('sony yay')){linkUrl='https://jtvxweb.pages.dev/pind?id=872';imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyYAYHin.png';genreName='Kids'}
+  if(n.includes('star sports 2')){chanName='Star Sports 2';linkUrl='https://jtvxweb.pages.dev/pind?id=1984';imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Sports_2.png';genreName='Sports'}
+  if(n.includes('sab hd 2'))linkUrl='https://allinonereborn2.online/sony/ptest1.html?id=sab-hd';
+  if(n.includes('sony yay 2'))linkUrl='https://allinonereborn2.online/sony/ptest1.html?id=sony-yay';
+  if(n==='set sd'||n==='sony entertainment television'||n==='set')imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_SD.png';
+  if(n.includes('mtv'))imgUrl='https://cdn.brandfetch.io/idG02Aquas/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667701258766';
+  if(n.includes('star plus'))imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Plus_HD.png';
+  if(n.includes('colors rishtey'))imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/ColorsRishtey.png';
+  if(n.includes('zee cinema'))imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/ZeeCinemaHD.png';
+  if(n.includes('sony max'))imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyMAX.png';
+  if(n==='star gold')imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Gold_HD.png';
+  if(n.includes('dd news'))imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/DD_News.png';
+  if(n.includes('aaj tak'))imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Aaj_Tak.png';
+  if(n.includes('travel xp'))imgUrl='https://jiotv.catchup.cdn.jio.com/dare_images/images/Travel_XP_HD.png';
+  if(n==='zee tv'||n==='zee tv hd')imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/ZeeTVHD.png';
+  if(n==='hungama'||n==='hungama tv')imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/Hungama.png';
+  if(n.includes('super hungama')||n.includes('hungama super'))imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/Super_Hungama.png';
+  if(n.includes('disney'))imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/Disney_Channel.png';
+  if(n.includes('cartoon network')||n==='cn')imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/CNHindi.png';
+  if(n.includes('tlc'))imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/TLCHDHindi.png';
+  if(n.includes('history tv'))imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/History_HD.png';
+  if(n.includes('nat geo wild')||n==='nat geo')imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/Nat_Geo_Wild_HD.png';
+  if(n.includes('& pictures')||n.includes('and pictures'))imgUrl='https://jiotvimages.cdn.jio.com/dare_images/images/AndPicturesHD.png';
+  if(genreName==='Entertainment')genreName='Fun-Ment';
+  if(genreName==='Infotainment')genreName='Info';
+  genres.add(genreName);
+  return{name:chanName,image:imgUrl,link:linkUrl,genre:genreName}
+ });
+ if(!processed.some(c=>c.name.toLowerCase().includes('sony yay')))processed.push({name:'Sony Yay',link:'https://jtvxweb.pages.dev/pind?id=872',image:'https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyYAYHin.png',genre:'Kids'});
+ if(!processed.some(c=>c.name==='Sony Pal'))processed.push({name:'Sony Pal',link:'https://allinonereborn2.online/sony/ptest1.html?id=sony-pal',image:'https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_Pal.png',genre:'Fun-Ment'});
+ if(!processed.some(c=>c.name==='Star Sports 2'))processed.push({name:'Star Sports 2',link:'https://jtvxweb.pages.dev/pind?id=1984',image:'https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Sports_2.png',genre:'Sports'});
+ allChannels=processed;finishSetup()
+}
+
+function loadFallbackData(){
+ genres.clear();genres.add('All');genres.add('Favorites');
+ const f=[
+ ["Sony SAB HD","https://jtvxweb.pages.dev/pind?id=471","https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_SAB.png","Fun-Ment"],
+ ["Colors HD","https://jtvxweb.pages.dev/pind?id=144","https://jiotv.catchup.cdn.jio.com/dare_images/images/Colors_HD.png","Fun-Ment"],
+ ["Colors Rishtey","https://jtvxweb.pages.dev/pind?id=279","https://jiotv.catchup.cdn.jio.com/dare_images/images/ColorsRishtey.png","Fun-Ment"],
+ ["Sony SAB SD","https://jtvxweb.pages.dev/pind?id=154","https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_SAB.png","Fun-Ment"],
+ ["And TV HD","https://jtvxweb.pages.dev/pind?id=472","https://jiotv.catchup.cdn.jio.com/dare_images/images/And_TV_HD.png","Fun-Ment"],
+ ["Sony Pal","https://gdl-live-tv.pages.dev/watch?ch=sony-pal","https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_Pal.png","Fun-Ment"],
+ ["Sony Pal 2","https://allinonereborn2.online/sony/ptest1.html?id=sony-pal","https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_Pal.png","Fun-Ment"],
+ ["Star Plus HD","https://jtvxweb.pages.dev/pind?id=1132","https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Plus_HD.png","Fun-Ment"],
+ ["MTV HD","https://jtvxweb.pages.dev/pind?id=1145","https://cdn.brandfetch.io/idG02Aquas/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667701258766","Fun-Ment"],
+ ["Zee TV","https://jtvxweb.pages.dev/pind?id=167","https://jiotvimages.cdn.jio.com/dare_images/images/ZeeTVHD.png","Fun-Ment"],
+ ["Big Magic","https://jtvxweb.pages.dev/pind?id=1359","https://jiotv.catchup.cdn.jio.com/dare_images/images/Big_Magic.png","Fun-Ment"],
+ ["Sony Entertainment Television","https://jtvxweb.pages.dev/pind?id=291","https://jiotv.catchup.cdn.jio.com/dare_images/images/Sony_SD.png","Fun-Ment"],
+ ["Star Gold","https://jtvxweb.pages.dev/pind?id=156","https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Gold_HD.png","Movies"],
+ ["Star Gold 2 HD","https://jtvxweb.pages.dev/pind?id=3096","https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Gold_2_HD.png","Movies"],
+ ["Star Gold Romance","https://jtvxweb.pages.dev/pind?id=3097","https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Gold_Romance.png","Movies"],
+ ["Star Gold Thrills","https://jtvxweb.pages.dev/pind?id=3098","https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Gold_Thrills.png","Movies"],
+ ["Sony Max","https://jtvxweb.pages.dev/pind?id=476","https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyMAX.png","Movies"],
+ ["Zee Cinema","https://jtvxweb.pages.dev/pind?id=165","https://jiotv.catchup.cdn.jio.com/dare_images/images/ZeeCinemaHD.png","Movies"],
+ ["& Pictures","https://allinonereborn2.online/zee5/player.php?mpd=https%3A%2F%2Fd1g8wgjurz8via.cloudfront.net%2Fbpk-tv%2FAndpictures%2Fdefault%2Fmanifest.mpd&keyid=8dea532cabfe4f71ba20f62310e7949f&key=7a214a974e4f4d1d9bb66364d5f0cb92","https://jiotvimages.cdn.jio.com/dare_images/images/AndPicturesHD.png","Movies"],
+ ["Cartoon Network","https://jtvxweb.pages.dev/pind?id=816","https://jiotvimages.cdn.jio.com/dare_images/images/CNHindi.png","Kids"],
+ ["Disney Channel","https://jtvxweb.pages.dev/pind?id=1373","https://jiotvimages.cdn.jio.com/dare_images/images/Disney_Channel.png","Kids"],
+ ["Sony Yay","https://jtvxweb.pages.dev/pind?id=872","https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyYAYHin.png","Kids"],
+ ["Hungama TV","https://jtvxweb.pages.dev/pind?id=1391","https://jiotvimages.cdn.jio.com/dare_images/images/Hungama.png","Kids"],
+ ["Hungama Super","https://jtvxweb.pages.dev/pind?id=1392","https://jiotvimages.cdn.jio.com/dare_images/images/Super_Hungama.png","Kids"],
+ ["National Geographic","https://jtvxweb.pages.dev/pind?id=1332","https://jiotvimages.cdn.jio.com/dare_images/images/Nat_Geo_Wild_HD.png","Info"],
+ ["TLC","https://jtvxweb.pages.dev/pind?id=3458","https://jiotvimages.cdn.jio.com/dare_images/images/TLCHDHindi.png","Info"],
+ ["History TV 18","https://jtvxweb.pages.dev/pind?id=146","https://jiotvimages.cdn.jio.com/dare_images/images/History_HD.png","Info"],
+ ["Travel XP","https://jtvxweb.pages.dev/pind?id=562","https://jiotv.catchup.cdn.jio.com/dare_images/images/Travel_XP_HD.png","Info"],
+ ["Aaj Tak","https://jtvxweb.pages.dev/pind?id=173","https://jiotv.catchup.cdn.jio.com/dare_images/images/Aaj_Tak.png","News"],
+ ["DD News","https://jtvxweb.pages.dev/pind?id=203","https://jiotv.catchup.cdn.jio.com/dare_images/images/DD_News.png","News"],
+ ["Star Sports 2","https://jtvxweb.pages.dev/pind?id=1984","https://jiotv.catchup.cdn.jio.com/dare_images/images/Star_Sports_2.png","Sports"],
+ ["Sony SAB HD 2","https://allinonereborn2.online/sony/ptest1.html?id=sab-hd","https://jiotvimages.cdn.jio.com/dare_images/images/Sony_SAB_HD.png","Fun-Ment"],
+ ["Sony YAY 2","https://allinonereborn2.online/sony/ptest1.html?id=sony-yay","https://jiotv.catchup.cdn.jio.com/dare_images/images/SonyYAYHin.png","Kids"]
+ ];
+ allChannels=f.map(x=>{genres.add(x[3]);return{name:x[0],link:x[1],image:x[2],genre:x[3]}});finishSetup()
+}
+
+function finishSetup(){
+ let h=window.location.hash?decodeURIComponent(window.location.hash.substring(1)):'All';
+ if(h.includes('stream=')){let p=h.includes('/stream=')?h.split('/stream='):[null,h.replace('stream=','')];activeCategory=p[0]||'All';if(!genres.has(activeCategory))activeCategory='All';renderCategories();renderGrid();const c=allChannels.find(x=>x.name===p[1]);if(c)openStream(c.link,c.name,true);return}
+ if(!genres.has(h)&&h!=='All'){activeCategory='All';location.hash='All'}else activeCategory=h;
+ renderCategories();renderGrid()
+}
+function renderCategories(){
+ const order=['All','Favorites','Fun-Ment','Movies','Sports','Kids','Info','News','Music','Regional'];
+ let html=order.filter(g=>genres.has(g)).map(g=>`<button class="chip ${activeCategory===g?'active':''}" data-genre="${g}" onclick="setCategory('${g}')">${categoryIcons[g]||'📺'} ${g}</button>`).join('');
+ if(isMobile)html+=`<button class="chip backup-btn" onclick="shareFavorites()">🔗 Backup Favs</button>`;
+ if(!isMobile)html+=`<button class="chip" onclick="toggleAutoFS()">⚙️ Auto-FS: ${isAutoFS?'ON':'OFF'}</button>`;
+ categoryContainer.innerHTML=html
+}
+function toggleAutoFS(){isAutoFS=!isAutoFS;localStorage.setItem('tvAutoFS',isAutoFS);renderCategories();showToast(`Auto-Fullscreen is now ${isAutoFS?'ON':'OFF'}`)}
+function setCategory(g){activeCategory=g;location.hash=g;renderCategories();renderGrid()}
+window.addEventListener('hashchange',()=>{
+ const h=decodeURIComponent(location.hash.substring(1));
+ if(h.includes('stream=')){const p=h.includes('/stream=')?h.split('/stream='):[null,h.replace('stream=','')];activeCategory=p[0]||'All';const c=allChannels.find(x=>x.name===p[1]);if(c)openStream(c.link,c.name,true);return}
+ if(playerContainer.style.display==='flex'){clearTimeout(autoFsTimer);const i=document.getElementById('playerIframe'),v=document.getElementById('playerVideo');if(i)i.src='about:blank';if(v){v.pause();v.removeAttribute('src');v.load()}document.getElementById('mediaContainer').innerHTML='';playerContainer.style.display='none';appContainer.style.display='flex';if(getFullscreenElement()||isPseudoFullscreen)exitFullscreenLogic()}
+ if(genres.has(h)||h==='All'){activeCategory=h;renderCategories();renderGrid()}
+});
+
+grid.addEventListener('click',e=>{
+ const fav=e.target.closest('.fav-btn');if(fav){e.preventDefault();e.stopPropagation();const card=fav.closest('.card');if(card)toggleFav(card.dataset.name,fav);return}
+ const card=e.target.closest('.card:not(.app-card)');if(card){const c=allChannels[Number(card.dataset.channelIndex)];if(c)openStream(c.link,c.name)}
+});
+grid.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const card=e.target.closest('.card:not(.app-card)');if(card){e.preventDefault();const c=allChannels[Number(card.dataset.channelIndex)];if(c)openStream(c.link,c.name)}}});
+
+function toggleFav(name,btn){const i=favorites.indexOf(name);if(i>-1){favorites.splice(i,1);btn.innerHTML='🤍';showToast('Removed from Favs')}else{favorites.push(name);btn.innerHTML='❤️';showToast('Saved to Favs!')}localStorage.setItem('tvFavsV2',JSON.stringify(favorites));if(activeCategory==='Favorites')renderGrid()}
+function renderGrid(reset=true){
+ if(reset)visibleRenderCount=INITIAL_RENDER_COUNT;currentFilteredChannels=getFilteredChannels();
+ if(!currentFilteredChannels.length){if(renderObserver)renderObserver.disconnect();grid.innerHTML=activeCategory==='Favorites'?'<div class="msg">No Favs yet. Tap the heart on a channel to save it!</div>':'<div class="msg">No channels found.</div>';return}
+ const visible=currentFilteredChannels.slice(0,visibleRenderCount);let html='';
+ visible.forEach(c=>{const i=allChannels.indexOf(c),fav=favorites.includes(c.name);html+=`<div class="card" tabindex="0" data-channel-index="${i}" data-name="${escapeHtml(c.name)}">${isMobile?`<button class="fav-btn" tabindex="-1">${fav?'❤️':'🤍'}</button>`:''}<div class="live">LIVE</div><img src="${escapeHtml(c.image)}" loading="lazy" width="46" height="46" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'"><h3>${escapeHtml(c.name)}</h3><p>${escapeHtml(c.genre)}</p></div>`});
+ if(activeCategory==='All')infinityApps.forEach(a=>html+=`<a href="${escapeHtml(a.url)}" target="_blank" rel="noopener noreferrer" class="card app-card" style="background:${a.grad};justify-content:center;padding-top:18px"><div style="font-size:28px">${a.icon}</div><h3 style="color:#fff">${escapeHtml(a.name)}</h3><p style="color:#fff">APP</p></a>`);
+ html+='<div id="gridSentinel" style="grid-column:1/-1;height:1px"></div>';grid.innerHTML=html;setupGridObserver()
+}
+function showToast(msg){const t=document.getElementById('toastMsg');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function shareFavorites(){if(!favorites.length)return showToast('No favs to backup!');const u=location.origin+location.pathname+'?favs='+encodeURIComponent(JSON.stringify(favorites));try{navigator.clipboard?.writeText(u);showToast('Copied! Paste to save.')}catch(e){location.href=u}}
+function renderSidebar(active){
+ const title=document.getElementById('sidebarCategoryTitle');if(title)title.textContent=(activeCategory==='All'?'ALL':activeCategory.toUpperCase())+' CHANNELS';
+ const list=activeCategory==='Favorites'?favorites.map(n=>allChannels.find(c=>c.name===n)).filter(Boolean):allChannels.filter(c=>activeCategory==='All'||c.genre===activeCategory);
+ const html=list.map(c=>{const i=allChannels.indexOf(c);return`<div class="yt-list-item ${c.name===active?'active':''}" tabindex="0" data-channel-index="${i}"><div class="flex items-center gap-3"><img src="${escapeHtml(c.image)}" loading="lazy" width="38" height="38" onerror="this.onerror=null;this.src='${PLACEHOLDER_IMG}'"><div><span class="text-[12px] font-semibold text-slate-200">${escapeHtml(c.name)}</span><div class="text-[8px] text-slate-400 uppercase">${escapeHtml(c.genre)}</div></div></div><div class="active-dot"></div></div>`}).join('');
+ sidebarList.innerHTML=html;document.getElementById('fsSidebarList').innerHTML=html
+}
+sidebarList.addEventListener('click',e=>{const item=e.target.closest('.yt-list-item');if(item){const c=allChannels[Number(item.dataset.channelIndex)];if(c)openStream(c.link,c.name)}});
+document.getElementById('fsSidebarList').addEventListener('click',e=>{const item=e.target.closest('.yt-list-item');if(item){const c=allChannels[Number(item.dataset.channelIndex)];if(c)openStream(c.link,c.name);toggleFsSidebar()}});
+
+let dashLoaderPromise=null;
+function loadDashJs(){if(window.dashjs)return Promise.resolve(window.dashjs);if(dashLoaderPromise)return dashLoaderPromise;dashLoaderPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.dashjs.org/latest/dash.all.min.js';s.onload=()=>resolve(window.dashjs);s.onerror=reject;document.head.appendChild(s)});return dashLoaderPromise}
+function openStream(url,name,fromHash=false){
+ if(!fromHash){location.hash=activeCategory+'/stream='+encodeURIComponent(name);return}
+ if(url.includes('.mpd')){document.getElementById('mediaContainer').innerHTML='<video id="playerVideo" controls autoplay style="width:100%;height:100%;background:#000"></video>';loadDashJs().then(d=>{const p=d.MediaPlayer().create();p.initialize(document.getElementById('playerVideo'),url,true)}).catch(console.error)}
+ else{const final=url+(url.includes('?')?'&':'?')+'autoplay=1&mute=1';document.getElementById('mediaContainer').innerHTML=`<iframe id="playerIframe" src="${escapeHtml(final)}" allow="autoplay;encrypted-media;picture-in-picture" sandbox="allow-scripts allow-same-origin" style="width:100%;height:100%;border:none"></iframe>`}
+ appContainer.style.display='none';playerContainer.style.display='flex';isStreamPlaying=true;document.getElementById('playPauseBtn').textContent='Ⅱ';renderSidebar(name);
+ if(isAutoFS){clearTimeout(autoFsTimer);autoFsTimer=setTimeout(()=>{if(!getFullscreenElement()&&!isPseudoFullscreen&&playerContainer.style.display==='flex')enterFullscreenLogic()},5000)}
+}
+function closePlayer(){location.hash=activeCategory}
+function togglePlayPause(){const v=document.getElementById('playerVideo'),f=document.getElementById('playerIframe'),b=document.getElementById('playPauseBtn');if(isStreamPlaying){if(v)v.pause();else if(f){f.dataset.savedSrc=f.src;f.src='about:blank'}b.textContent='▶';isStreamPlaying=false;showToast('Stream Paused.')}else{if(v)v.play();else if(f&&f.dataset.savedSrc)f.src=f.dataset.savedSrc;b.textContent='Ⅱ';isStreamPlaying=true;showToast('Resuming Live Stream...')}}
+function toggleFsSidebar(){document.getElementById('fsSidebar').classList.toggle('-translate-x-full')}
+function updateFullscreenUI(){const o=document.getElementById('fsOverlay'),show=!!getFullscreenElement()||isPseudoFullscreen;o.style.display=show?'block':'none';if(!show)document.getElementById('fsSidebar').classList.add('-translate-x-full');else applyLandscapeLock()}
+function safeRequestFullscreen(el,cb){try{let p=el.requestFullscreen?.()||el.webkitRequestFullscreen?.()||el.mozRequestFullScreen?.()||el.msRequestFullscreen?.();if(p?.catch)p.catch(()=>cb?.());else if(!p)cb?.()}catch(e){cb?.()}}
+document.addEventListener('fullscreenchange',updateFullscreenUI);
+document.addEventListener('webkitfullscreenchange',updateFullscreenUI);
+window.addEventListener('keydown',e=>{if([27,461,10009].includes(e.keyCode)||e.key==='Escape'){if(playerContainer.style.display==='flex'){if(getFullscreenElement()||isPseudoFullscreen)exitFullscreenLogic();else closePlayer()}}});
+fetchData();
+</script>
+</body>
+</html>
