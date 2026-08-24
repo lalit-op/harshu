@@ -1141,10 +1141,11 @@ const ua = navigator.userAgent;
             if (chanName.toLowerCase().includes('& pictures') || chanName.toLowerCase().includes('and pictures')) imgUrl = 'https://jiotvimages.cdn.jio.com/dare_images/images/AndPicturesHD.png';
             
 
-            // Always use the JTVX page for the catalog's channel ID.
-            // This overrides legacy per-channel fallbacks so the entire catalog
-            // follows the same JTVX routing scheme.
-            linkUrl = channelId ? `https://jtvxweb.pages.dev/pind?id=${encodeURIComponent(channelId)}` : linkUrl;
+            // Use the JTVX page for normal channels that have an ID.
+            // Sony Pal is the exception: it uses its custom authorized URL.
+            if (chanName !== 'Sony Pal' && channelId) {
+                linkUrl = `https://jtvxweb.pages.dev/pind?id=${encodeURIComponent(channelId)}`;
+            }
 
             if (genreName === 'Entertainment') genreName = 'Fun-Ment';
             if (genreName === 'Infotainment') genreName = 'Info';
