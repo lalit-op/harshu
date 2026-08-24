@@ -860,7 +860,7 @@ const ua = navigator.userAgent;
     
     let defaultFavs = [
         "Sony SAB SD",
-        "Sony Pal 2",
+        "Sony Pal",
         "Disney Channel",
         "Hungama TV", 
         "Sony Yay", 
@@ -879,7 +879,7 @@ const ua = navigator.userAgent;
     // Migration: automatically swap Pal with Pal 2 for returning users
     const pal2Idx = favorites.indexOf("Sony Pal");
     if (pal2Idx !== -1) {
-        favorites[pal2Idx] = "Sony Pal 2";
+        favorites[pal2Idx] = "Sony Pal";
         localStorage.setItem('tvFavsV2', JSON.stringify(favorites));
     }
     
@@ -1098,7 +1098,7 @@ const ua = navigator.userAgent;
             if (chanName.toLowerCase().includes('dd news')) linkUrl = 'https://jtvxweb.pages.dev/pind?id=203';
             if (chanName.toLowerCase().includes('rishtey')) { chanName = 'Colors Rishtey'; linkUrl = 'https://jtvxweb.pages.dev/pind?id=279'; }
             if (chanName.toLowerCase().includes('and tv') || chanName.toLowerCase().includes('& tv')) linkUrl = 'https://jtvxweb.pages.dev/pind?id=472';
-            if (chanName.toLowerCase() === 'sony pal' || chanName.toLowerCase() === 'sonypal') { chanName = 'Sony Pal'; linkUrl = 'https://gdl-live-tv.pages.dev/watch?ch=sony-pal'; }
+            if (chanName.toLowerCase() === 'sony pal' || chanName.toLowerCase() === 'sonypal') { chanName = 'Sony Pal'; linkUrl = 'https://allinonereborn2.online/sony/ptest1.html?id=sony-pal'; }
             if (chanName.toLowerCase().includes('star plus')) linkUrl = 'https://jtvxweb.pages.dev/pind?id=1132';
             if (chanName.toLowerCase().includes('mtv')) { chanName = 'MTV HD'; linkUrl = 'https://jtvxweb.pages.dev/pind?id=1145'; }
             if (chanName.toLowerCase().includes('zee tv')) linkUrl = 'https://jtvxweb.pages.dev/pind?id=167';
