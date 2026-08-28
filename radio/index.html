@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Harsh - IT</title>
     
     <!-- Load Tailwind CSS -->
@@ -337,6 +337,118 @@
         }
         input[type=range].radius-slider::-webkit-slider-runnable-track { height: 2px; background: #374151; }
 
+        /* ================= POLISHED PLAYER CONTROLS ================= */
+        .hero-nav-btn {
+            background: linear-gradient(145deg, rgba(255,255,255,.10), rgba(255,255,255,.035));
+            border: 1px solid rgba(255,255,255,.12);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 8px 24px rgba(0,0,0,.22);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .hero-nav-btn:hover {
+            color: #fff;
+            border-color: rgba(0,229,255,.55);
+            background: linear-gradient(145deg, rgba(0,229,255,.16), rgba(249,17,85,.08));
+            box-shadow: 0 0 24px rgba(0,229,255,.16), inset 0 1px 0 rgba(255,255,255,.12);
+            transform: translateY(-1px) scale(1.04);
+        }
+
+        .player-stations-btn {
+            background: linear-gradient(135deg, rgba(0,229,255,.14), rgba(249,17,85,.13) 55%, rgba(255,255,255,.04));
+            border: 1px solid rgba(0,229,255,.24);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 8px 28px rgba(0,0,0,.24), 0 0 24px rgba(0,229,255,.06);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+        .player-stations-btn:hover {
+            border-color: rgba(0,229,255,.62);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.18), 0 10px 32px rgba(0,0,0,.30), 0 0 28px rgba(0,229,255,.16);
+            transform: translateY(-1px);
+        }
+        .station-btn-glow {
+            position: absolute;
+            width: 72px;
+            height: 72px;
+            left: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 999px;
+            background: rgba(0,229,255,.16);
+            filter: blur(24px);
+            pointer-events: none;
+            transition: opacity .3s ease, transform .3s ease;
+        }
+        .player-stations-btn:hover .station-btn-glow {
+            opacity: 1.4;
+            transform: translateY(-50%) scale(1.25);
+        }
+
+        @media (max-width: 380px) {
+            .player-stations-btn {
+                min-width: 88px;
+                padding-left: .55rem;
+                padding-right: .55rem;
+                gap: .35rem;
+            }
+            .player-stations-btn > span:not(.station-btn-glow) {
+                display: flex;
+            }
+            .player-stations-btn > svg:last-child {
+                display: block;
+            }
+        }
+
+        /* ================= CROSS-DEVICE PLAYER SAFETY ================= */
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        #stations-toggle-btn {
+            flex: 0 0 auto;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        @media (max-width: 640px) {
+            #stations-toggle-btn {
+                min-width: 96px;
+                max-width: 118px;
+            }
+
+            #stations-toggle-btn .station-btn-glow {
+                width: 58px;
+                height: 58px;
+                filter: blur(20px);
+            }
+
+            .player-stations-btn > span:not(.station-btn-glow) {
+                display: flex !important;
+            }
+
+            .player-stations-btn > svg:last-child {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 360px) {
+            #stations-toggle-btn {
+                min-width: 88px;
+                max-width: 102px;
+                padding-left: .5rem;
+                padding-right: .5rem;
+            }
+            #stations-toggle-btn .text-\[11px\] {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-height: 650px) and (orientation: landscape) {
+            .player-stations-btn {
+                height: 42px;
+            }
+        }
+
         /* ================= AURA GLASS REVAMP MODE ================= */
         @keyframes blob {
             0% { transform: translate(0px, 0px) scale(1); }
@@ -402,6 +514,111 @@
         body.glass-mirage { --g-bg: rgba(60,20,0,0.2); --g-blur: blur(60px); --g-border: 1px solid rgba(255,61,0,0.2); --g-shadow: 0 10px 40px rgba(255,61,0,0.1); --blob-op: 0.6; }
         body.glass-void { --g-bg: rgba(0,0,0,0.5); --g-blur: blur(10px); --g-border: none; --g-shadow: 0 20px 50px rgba(0,0,0,0.8); --blob-op: 0.1; }
         body.glass-candy { --g-bg: rgba(40,10,30,0.2); --g-blur: blur(35px); --g-border: 1px solid rgba(255,119,170,0.4); --g-shadow: inset 0 0 20px rgba(0,229,255,0.1); --blob-op: 0.6; }
+
+    
+        /* ================= CROSS-DEVICE OPTIMIZATION ================= */
+        html { height: 100%; background: #000; }
+        body { min-width: 280px; min-height: 100%; }
+        button, input, textarea, select { font: inherit; }
+        button { touch-action: manipulation; -webkit-touch-callout: none; }
+        img { max-width: 100%; }
+        .player-action-btn,
+        #hero-prev-btn, #hero-play-btn, #hero-next-btn,
+        #mini-prev-btn, #mini-play-btn, #mini-next-btn {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        #hero-state-active { min-width: 0; }
+        #hero-state-active > div:first-child { min-width: 0; }
+        #hero-active-title, #hero-active-slogan { min-width: 0; }
+        #mini-title { min-width: 0; }
+        #mini-player { max-width: calc(100vw - 16px); }
+        @supports (height: 100svh) { .app-container { min-height: 100svh; } }
+        .view-container { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+        .custom-scrollbar { scrollbar-gutter: stable; }
+
+        /* Prevent horizontal overflow on compact phones. */
+        @media (max-width: 639px) {
+            #home-hero-card { padding: 16px !important; }
+            #hero-state-active { flex-wrap: wrap; align-items: center; }
+            #hero-state-active > div:first-child {
+                width: 100%;
+                padding-right: 0;
+                gap: 12px;
+            }
+            #hero-active-title { max-width: calc(100vw - 150px); }
+            #hero-active-slogan { max-width: calc(100vw - 150px); }
+            #hero-active-waves { display: none !important; }
+            #hero-state-active > .hero-player-controls {
+                width: 100%;
+                justify-content: center;
+                margin-top: 4px;
+            }
+            #hero-prev-btn, #hero-next-btn { width: 44px; height: 44px; }
+            #hero-play-btn { width: 48px; height: 48px; }
+            #mini-player {
+                left: max(8px, env(safe-area-inset-left));
+                right: max(8px, env(safe-area-inset-right));
+                bottom: calc(68px + env(safe-area-inset-bottom));
+                max-width: none;
+                padding-left: 10px;
+                padding-right: 10px;
+                border-radius: 20px;
+            }
+            #mini-prev-btn, #mini-next-btn { width: 42px; height: 42px; }
+            #mini-play-btn { width: 44px; height: 44px; }
+            #mini-player > div:first-child { min-width: 0; }
+            #mini-title { max-width: 34vw; }
+        }
+
+        @media (max-width: 360px) {
+            #home-hero-card { padding: 13px !important; }
+            #hero-state-active > div:first-child { gap: 9px; }
+            #hero-active-title { font-size: 1rem; max-width: calc(100vw - 135px); }
+            #hero-active-slogan { font-size: .68rem; max-width: calc(100vw - 135px); }
+            #hero-state-active > .hero-player-controls { gap: 6px; }
+            #mini-title { max-width: 27vw; }
+            #mini-player { gap: 4px; }
+        }
+
+        /* Short landscape phones/tablets. */
+        @media (orientation: landscape) and (max-height: 520px) {
+            #view-player { padding-top: env(safe-area-inset-top); }
+            #view-player .md\\:mb-8 { margin-bottom: 8px; }
+            #player-big-clock { font-size: 2.25rem; }
+            #view-player .my-4 { margin-top: 6px; margin-bottom: 6px; }
+        }
+
+        /* Safari/iOS and older Chromium fallback when backdrop-filter is unavailable. */
+        @supports not ((backdrop-filter: blur(1px))) {
+            body.theme-glass .bg-card,
+            body.theme-glass #sidebar,
+            body.theme-glass #mini-player,
+            body.theme-glass #home-hero-card,
+            body.theme-glass #view-player,
+            body.theme-glass .station-card {
+                background-color: rgba(20,20,25,.96) !important;
+            }
+        }
+
+        /* Reduce GPU load and respect accessibility preferences. */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: .01ms !important;
+            }
+        }
+
+        @media (pointer: coarse) {
+            #hero-prev-btn, #hero-play-btn, #hero-next-btn,
+            #mini-prev-btn, #mini-play-btn, #mini-next-btn,
+            #player-prev-btn, #player-play-btn, #player-next-btn {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
 
     </style>
 </head>
@@ -622,7 +839,7 @@
         <div class="absolute top-0 left-0 right-0 h-40 bg-[var(--primary)] opacity-[0.03] blur-[50px] pointer-events-none z-0 ambient-glow"></div>
 
         <!-- Hidden Audio Element -->
-        <audio id="audio-player" preload="none" crossorigin="anonymous"></audio>
+        <audio id="audio-player" preload="none" playsinline webkit-playsinline crossorigin="anonymous"></audio>
 
         <!-- ================= NAVIGATION (Bottom Mobile, Left Desktop) ================= -->
         <nav id="sidebar" class="fixed md:relative bottom-0 left-0 w-full md:w-64 h-[calc(60px+env(safe-area-inset-bottom))] md:h-full bg-[var(--app-bg)]/95 backdrop-blur-xl md:bg-[var(--card-bg)] flex justify-around md:flex-col md:justify-start items-center md:items-stretch px-2 md:px-4 pb-[env(safe-area-inset-bottom)] md:pb-8 pt-1 md:pt-8 z-[60] shadow-[0_-10px_30px_rgba(0,0,0,0.5)] md:shadow-none md:border-r border-white/5 shrink-0 transition-all duration-300">
@@ -737,7 +954,7 @@
                                 </div>
 
                                 <!-- ACTIVE STATE -->
-                                <div id="hero-state-active" class="hidden w-full flex items-center justify-between transition-opacity duration-300 z-10 text-left">
+                                <div id="hero-state-active" class="hidden w-full flex items-center justify-between gap-2 md:gap-4 transition-opacity duration-300 z-10 text-left">
                                     <div class="flex items-center gap-4 md:gap-6 w-full pr-2">
                                         <div class="relative w-14 h-14 md:w-20 md:h-20 p-[2px] rounded-2xl flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(249,17,85,0.4)] overflow-hidden">
                                             <div class="logo-edge-spinner"></div>
@@ -751,11 +968,36 @@
                                             <h2 id="hero-active-title" class="font-black text-lg md:text-3xl text-white truncate max-w-[150px] sm:max-w-full">Radio Mirchi Dubai</h2>
                                             <p id="hero-active-slogan" class="text-xs md:text-sm text-gray-400 truncate">102.4 FM • Bollywood • Hindi</p>
                                         </div>
-                                        <div class="hidden sm:flex items-end gap-1.5 h-12 px-4" id="hero-active-waves"></div>
+                                        <div class="hidden sm:flex items-end gap-1.5 h-12 px-2 md:px-4" id="hero-active-waves"></div>
                                     </div>
-                                    <button id="hero-play-btn" onclick="event.stopPropagation(); togglePlay();" class="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full bg-primary text-white flex items-center justify-center shadow-[0_0_15px_rgba(249,17,85,0.4)] active:scale-95 md:hover:scale-105 transition-all z-20 relative border border-white/10 md:hover:border-white/30">
-                                        <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
-                                    </button>
+
+                                    <!-- Hero Player Controls -->
+                                    <div class="hero-player-controls flex items-center justify-center gap-1.5 md:gap-2 shrink-0 z-20 relative">
+                                        <button id="hero-prev-btn" type="button"
+                                            onclick="event.stopPropagation(); prevStation();"
+                                            class="hero-nav-btn w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-gray-200 active:scale-90 transition-all"
+                                            title="Previous Station" aria-label="Previous station">
+                                            <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M13 5v14l-7-7 7-7M19 5v14"/>
+                                            </svg>
+                                        </button>
+
+                                        <button id="hero-play-btn" type="button"
+                                            onclick="event.stopPropagation(); togglePlay();"
+                                            class="w-12 h-12 md:w-14 md:h-14 shrink-0 rounded-full bg-primary text-white flex items-center justify-center shadow-[0_0_15px_rgba(249,17,85,0.4)] active:scale-95 md:hover:scale-105 transition-all border border-white/10 md:hover:border-white/30"
+                                            title="Play/Pause" aria-label="Play or pause station">
+                                            <svg class="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                                        </button>
+
+                                        <button id="hero-next-btn" type="button"
+                                            onclick="event.stopPropagation(); nextStation();"
+                                            class="hero-nav-btn w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center text-gray-200 active:scale-90 transition-all"
+                                            title="Next Station" aria-label="Next station">
+                                            <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 5v14l7-7-7-7M5 5v14"/>
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1228,16 +1470,23 @@
                                 <button id="player-fav-btn" class="active:text-blue-500 md:hover:text-blue-500 active:scale-95 md:hover:scale-110 transition-all text-gray-400" onclick="toggleFavoriteCurrent()">
                                     <!-- Dynamic Icon -->
                                 </button>
-                                <button id="stations-toggle-btn" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-card border border-[rgba(255,255,255,0.05)] flex items-center justify-center md:hover:border-primary transition-all duration-300 group shadow-lg cursor-pointer active:scale-95" onclick="openPlayerStations()" title="Radio Stations">
-                                    <svg class="w-6 h-6 text-gray-400 md:group-hover:text-primary transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 8.5a8 8 0 0116 0M7 11a5 5 0 0110 0M10 13.5a2 2 0 014 0M12 16v.01"></path>
+                                <button id="stations-toggle-btn" type="button" onclick="openPlayerStations()"
+                                    class="player-stations-btn group relative h-11 min-w-[96px] sm:min-w-[112px] md:h-14 md:min-w-[130px] px-3 sm:px-4 md:px-5 rounded-2xl md:rounded-3xl flex items-center justify-center gap-2 overflow-hidden active:scale-95 transition-all duration-300"
+                                    title="Browse Radio Stations" aria-label="Browse radio stations">
+                                    <span class="station-btn-glow"></span>
+                                    <span class="relative z-10 flex flex-col items-center sm:items-start justify-center leading-none whitespace-nowrap">
+                                        <span class="text-[7px] sm:text-[8px] md:text-[9px] font-bold uppercase tracking-[0.16em] text-cyan-300">Live</span>
+                                        <span class="text-[11px] sm:text-xs md:text-sm font-bold text-white">Stations</span>
+                                    </span>
+                                    <svg class="relative z-10 w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-300 group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
                                     </svg>
                                 </button>
                             </div>
 
                             <!-- Main Controls -->
                             <div class="flex items-center justify-center gap-5 md:gap-8 mb-8 md:mb-12 w-full mt-2">
-                                <button id="player-prev-btn" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/5 border border-white/10 text-gray-300 flex items-center justify-center active:scale-90 md:hover:scale-110 md:hover:text-white md:hover:border-primary transition-all" title="Previous Station">
+                                <button id="player-prev-btn" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/5 border border-white/10 text-gray-300 flex items-center justify-center active:scale-90 md:hover:scale-110 md:hover:text-white md:hover:border-primary transition-all" title="Previous Station" aria-label="Previous station">
                                     <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5v14l-8-7 8-7zm1 7h9"/>
                                     </svg>
@@ -1249,7 +1498,7 @@
                                     </div>
                                 </button>
 
-                                <button id="player-next-btn" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/5 border border-white/10 text-gray-300 flex items-center justify-center active:scale-90 md:hover:scale-110 md:hover:text-white md:hover:border-primary transition-all" title="Next Station">
+                                <button id="player-next-btn" class="w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/5 border border-white/10 text-gray-300 flex items-center justify-center active:scale-90 md:hover:scale-110 md:hover:text-white md:hover:border-primary transition-all" title="Next Station" aria-label="Next station">
                                     <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 5v14l8-7-8-7zM12 12H3"/>
                                     </svg>
@@ -1274,7 +1523,7 @@
         </div>
 
         <!-- ================= COMPACT MINI PLAYER ================= -->
-        <div id="mini-player" class="fixed md:absolute bottom-[calc(70px+env(safe-area-inset-bottom,0px))] md:bottom-8 left-2 right-2 md:left-auto md:right-8 md:w-[360px] bg-card/95 backdrop-blur-xl p-3 px-4 flex items-center justify-between border border-[rgba(255,255,255,0.05)] rounded-[24px] cursor-pointer z-[50] transition-transform duration-300 shadow-xl translate-y-[200%]" onclick="if(event.target.closest('button')) return; window.location.hash='player/' + STATIONS[currentStationIndex].id">
+        <div id="mini-player" class="fixed md:absolute bottom-[calc(70px+env(safe-area-inset-bottom,0px))] md:bottom-8 left-2 right-2 md:left-auto md:right-8 md:w-[430px] bg-card/95 backdrop-blur-xl p-3 px-4 flex items-center justify-between border border-[rgba(255,255,255,0.05)] rounded-[24px] cursor-pointer z-[50] transition-transform duration-300 shadow-xl translate-y-[200%]" onclick="if(event.target.closest('button')) return; window.location.hash='player/' + STATIONS[currentStationIndex].id">
             <div class="flex items-center gap-3 overflow-hidden flex-grow">
                 <div class="relative w-10 h-10 md:w-12 md:h-12 p-[2px] rounded-[16px] overflow-hidden shrink-0 shadow-[0_0_15px_rgba(249,17,85,0.3)] flex items-center justify-center">
                     <div class="logo-edge-spinner"></div>
@@ -1287,20 +1536,28 @@
                     <h4 id="mini-title" class="text-xs md:text-sm font-bold text-white truncate">Station Loading</h4>
                 </div>
             </div>
-            <div class="flex items-center gap-1.5 shrink-0 ml-2">
-                <button id="mini-prev-btn" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center text-gray-300 active:text-primary md:hover:text-primary transition-all bg-white/5 active:bg-white/10 md:hover:bg-white/10 rounded-full border border-white/5 md:hover:border-white/20" onclick="event.stopPropagation(); playPreviousStation();" title="Previous Station">
-                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5v14l-8-7 8-7zm1 7h9"/>
+            <div class="flex items-center gap-1 shrink-0 ml-2">
+                <button id="mini-prev-btn" type="button"
+                    class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/10 text-white hover:bg-primary/20 hover:border-primary active:scale-90 transition-all"
+                    onclick="event.stopPropagation(); prevStation();" title="Previous Station" aria-label="Previous station">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5v14l-8-7 8-7M12 12h9"/>
                     </svg>
                 </button>
 
-                <button id="mini-play-btn" class="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center text-white active:text-primary md:hover:text-primary transition-colors bg-white/5 active:bg-white/10 md:hover:bg-white/10 rounded-full border border-white/5 md:hover:border-white/20" onclick="event.stopPropagation(); togglePlay();" title="Play/Pause">
-                    <svg class="w-5 h-5 md:w-6 md:h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                <button id="mini-play-btn" type="button"
+                    class="w-11 h-11 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-white/10 border border-white/10 text-white hover:bg-primary/20 hover:border-primary active:scale-90 transition-all"
+                    onclick="event.stopPropagation(); togglePlay();" title="Play/Pause" aria-label="Play or pause station">
+                    <svg class="w-5 h-5 md:w-6 md:h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z"></path>
+                    </svg>
                 </button>
 
-                <button id="mini-next-btn" class="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center text-gray-300 active:text-primary md:hover:text-primary transition-all bg-white/5 active:bg-white/10 md:hover:bg-white/10 rounded-full border border-white/5 md:hover:border-white/20" onclick="event.stopPropagation(); playNextStation();" title="Next Station">
-                    <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M13 5v14l8-7-8-7zM12 12H3"/>
+                <button id="mini-next-btn" type="button"
+                    class="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center rounded-full bg-white/10 border border-white/10 text-white hover:bg-primary/20 hover:border-primary active:scale-90 transition-all"
+                    onclick="event.stopPropagation(); nextStation();" title="Next Station" aria-label="Next station">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5v14l8-7-8-7M12 12H3"/>
                     </svg>
                 </button>
             </div>
@@ -1719,18 +1976,6 @@
             document.getElementById('glass-overlay').classList.remove('hidden');
         }
         function closeGlassModal() { document.getElementById('glass-overlay').classList.add('hidden'); }
-
-        function playPreviousStation() {
-            if (!STATIONS.length) return;
-            currentStationIndex = (currentStationIndex - 1 + STATIONS.length) % STATIONS.length;
-            playStation(currentStationIndex);
-        }
-
-        function playNextStation() {
-            if (!STATIONS.length) return;
-            currentStationIndex = (currentStationIndex + 1) % STATIONS.length;
-            playStation(currentStationIndex);
-        }
 
         function openPlayerStations() {
             const overlay = document.getElementById('player-stations-overlay');
@@ -2581,7 +2826,7 @@
                     <div class="station-card p-2 sm:p-3 flex flex-col items-center gap-2 border border-[rgba(255,255,255,0.02)] cursor-pointer active:bg-white/5 md:hover:bg-white/5 transition rounded-2xl group bg-card active:scale-95 md:active:scale-100 relative overflow-hidden" data-search-term="${searchTerm}" data-index="${idx}" onclick="playStation(${idx})">
                         <div class="artwork-wrap w-full aspect-square rounded-xl flex items-center justify-center relative overflow-hidden shrink-0 border transition-all duration-300 ${isActive ? 'shadow-primary border-primary bg-transparent scale-105' : 'border-white/10 bg-[#111]'}">
                             ${isActive ? `<div class="absolute inset-0 opacity-20" style="background-color: ${st.color}"></div>` : ''}
-                            <img src="${st.logo}" class="w-full h-full object-cover transition-transform duration-500 md:group-hover:scale-110" alt="${st.name}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(st.name)}&background=${st.color.replace('#','')}&color=fff&size=256';"/>
+                            <img src="${st.logo}" class="w-full h-full object-cover transition-transform duration-500 md:group-hover:scale-110" alt="${st.name}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(st.name)}&background=${st.color.replace('#','')}&color=fff&size=256';"/>
                             
                             <div class="absolute inset-0 bg-black/40 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300"></div>
 
@@ -2604,7 +2849,7 @@
                     <div class="station-card p-3 flex items-center gap-3 sm:gap-4 border border-[rgba(255,255,255,0.02)] cursor-pointer active:bg-white/5 md:hover:bg-white/5 transition px-3 sm:px-4 rounded-xl group bg-card active:scale-95 md:active:scale-100" data-search-term="${searchTerm}" data-index="${idx}" onclick="playStation(${idx})">
                         <div class="artwork-wrap w-12 h-12 rounded-full flex items-center justify-center relative overflow-hidden shrink-0 border transition-all duration-300 ${isActive ? 'shadow-primary border-primary bg-transparent' : 'border-white/10 bg-[#111]'}">
                             ${isActive ? `<div class="absolute inset-0 opacity-20" style="background-color: ${st.color}"></div>` : ''}
-                            <img src="${st.logo}" class="w-full h-full object-cover" alt="${st.name}" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(st.name)}&background=${st.color.replace('#','')}&color=fff&size=128';"/>
+                            <img src="${st.logo}" class="w-full h-full object-cover" alt="${st.name}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(st.name)}&background=${st.color.replace('#','')}&color=fff&size=128';"/>
                         </div>
                         <div class="flex-grow truncate">
                             <h4 class="text-sm font-bold ${activeColor} truncate">${st.name}</h4>
@@ -2854,8 +3099,8 @@
                     lowLatencyMode: true,
                     liveSyncDurationCount: 1,
                     liveMaxLatencyDurationCount: 3,
-                    maxBufferLength: 5,
-                    maxMaxBufferLength: 10,
+                    maxBufferLength: 4,
+                    maxMaxBufferLength: 8,
                     backBufferLength: 0,
                     enableWorker: true
                 });
@@ -2967,8 +3212,19 @@
             }
         }
 
-        function nextStation() { playStation((currentStationIndex + 1) % STATIONS.length); }
-        function prevStation() { playStation(currentStationIndex === 0 ? STATIONS.length - 1 : currentStationIndex - 1); }
+        let stationNavigationLock = false;
+        function nextStation() {
+            if (stationNavigationLock || !STATIONS.length) return;
+            stationNavigationLock = true;
+            playStation((currentStationIndex + 1) % STATIONS.length);
+            setTimeout(() => { stationNavigationLock = false; }, 250);
+        }
+        function prevStation() {
+            if (stationNavigationLock || !STATIONS.length) return;
+            stationNavigationLock = true;
+            playStation(currentStationIndex === 0 ? STATIONS.length - 1 : currentStationIndex - 1);
+            setTimeout(() => { stationNavigationLock = false; }, 250);
+        }
 
         function updateListPlayStates() {
             document.querySelectorAll('.station-card').forEach(card => {
@@ -3056,7 +3312,7 @@
             const mPlayBtn = document.getElementById('mini-play-btn');
             
             if (mTitle) mTitle.textContent = `${st.name} - ${st.slogan}`;
-            if (mIcon) mIcon.innerHTML = `<img src="${st.logo}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(st.name)}&background=${st.color.replace('#','')}&color=fff&size=128';"/>`;
+            if (mIcon) mIcon.innerHTML = `<img src="${st.logo}" class="w-full h-full object-cover" loading="eager" decoding="async" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(st.name)}&background=${st.color.replace('#','')}&color=fff&size=128';"/>`;
             
             const heroCard = document.getElementById('home-hero-card');
             const heroIdle = document.getElementById('hero-state-idle');
@@ -3147,8 +3403,8 @@
 
                 navigator.mediaSession.setActionHandler('play', () => { if(!isPlaying) togglePlay(); });
                 navigator.mediaSession.setActionHandler('pause', () => { if(isPlaying) togglePlay(); });
-                navigator.mediaSession.setActionHandler('previoustrack', prevStation);
-                navigator.mediaSession.setActionHandler('nexttrack', nextStation);
+                try { navigator.mediaSession.setActionHandler('previoustrack', prevStation); } catch (_) {}
+                try { navigator.mediaSession.setActionHandler('nexttrack', nextStation); } catch (_) {}
             }
         }
 
@@ -3221,7 +3477,7 @@
                 const xDiff = touchEndX - touchStartX;
                 const yDiff = touchEndY - touchStartY;
 
-                if (Math.abs(xDiff) > 80 && Math.abs(yDiff) < 100) {
+                if (Math.abs(xDiff) > 80 && Math.abs(yDiff) < 80) {
                     triggerHaptic();
                     if (xDiff > 0) prevStation(); 
                     else nextStation(); 
