@@ -1898,11 +1898,20 @@ const ua = navigator.userAgent;
 
     sidebarList.addEventListener('click', (e) => {
         const item = e.target.closest('.yt-list-item');
+
         if (item) {
-            const channel = allChannels[Number(item.dataset.channelIndex)];
-            if (channel) openStream(channel.link, channel.name);
+            const channel = allChannels[
+                Number(item.dataset.channelIndex)
+            ];
+
+            if (channel) {
+                if (sidebarSearchQuery) {
+                    window.__searchSelectedChannel = channel.name;
+                }
+                openStream(channel.link, channel.name);
+            }
         }
-    }, { passive: true });
+    });
 
     sidebarList.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.keyCode === 13 || e.key === ' ' || e.keyCode === 32) {
@@ -2076,6 +2085,11 @@ const ua = navigator.userAgent;
         }
     }
 
+    // Search-selection state: remembers the channel selected from search
+    // without changing the permanent channel order.
+    window.__searchSelectedChannel = null;
+    window.__sidebarScrollBeforeSearch = null;
+
     function renderSidebar(activeChannelName) {
         if (!sidebarList) return;
 
@@ -2150,15 +2164,7 @@ const ua = navigator.userAgent;
         primaryList = primaryList.filter(matchesSearch);
         allChannelsList = allChannelsList.filter(matchesSearch);
 
-        // Keep the currently playing channel visible and selected when it is
-        // not hidden by the current search. This preserves the existing player UX.
-        if (activeChannelName && !q) {
-            const activeChannel = allChannels.find(c => c.name === activeChannelName);
-            if (activeChannel) {
-                primaryList = primaryList.filter(c => c.name !== activeChannelName);
-                primaryList.unshift(activeChannel);
-            }
-        }
+        // Search only filters visibility; it never changes channel order or scroll position.
 
         const primaryHtml = primaryList.map(channelItemHtml).join('');
         let html = '';
@@ -2201,19 +2207,8 @@ const ua = navigator.userAgent;
         const fsListEl = document.getElementById('fsSidebarList');
         if (fsListEl) fsListEl.innerHTML = html;
 
-        setTimeout(() => {
-            const activeEl = sidebarList.querySelector('.yt-list-item.active');
-            if (activeEl) {
-                try { activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-                catch(e) { activeEl.scrollIntoView(); }
-            }
-
-            const fsActiveEl = fsListEl?.querySelector('.yt-list-item.active');
-            if (fsActiveEl) {
-                try { fsActiveEl.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-                catch(e) { fsActiveEl.scrollIntoView(); }
-            }
-        }, 100);
+        // Keep the currently playing channel at its original position.
+        // Only its .active highlight changes; do not auto-scroll/reorder it.
     }
 
     function updatePlayerFavoriteButton() {
@@ -2329,12 +2324,35 @@ const ua = navigator.userAgent;
     }
 
     if (sidebarSearch) {
-        sidebarSearch.addEventListener('input', () => {
+        function restoreSidebarAfterSearchClear() {
+        if (!sidebarList) return;
+
+        const saved = window.__sidebarScrollBeforeSearch;
+        if (!saved) return;
+
+        requestAnimationFrame(() => {
+            sidebarList.scrollTop = saved.top;
+            sidebarList.scrollLeft = saved.left;
+        });
+    }
+
+    sidebarSearch.addEventListener('input', () => {
+        if (!sidebarSearchQuery && sidebarList) {
+            window.__sidebarScrollBeforeSearch = {
+                top: sidebarList.scrollTop,
+                left: sidebarList.scrollLeft
+            };
+        }
+
             sidebarSearchQuery = sidebarSearch.value.trim();
             if (fsSidebarSearch && fsSidebarSearch.value !== sidebarSearch.value) {
                 fsSidebarSearch.value = sidebarSearch.value;
             }
             renderSidebar();
+        if (!sidebarSearchQuery) {
+            restoreSidebarAfterSearchClear();
+        }
+
         });
     }
 
