@@ -903,6 +903,15 @@ nav a {
 }
 </style>
 
+
+<style id="install-button-final-fix">
+#install-app-btn {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    touch-action: manipulation;
+}
+</style>
+
 </head>
 <body>
 
@@ -1466,7 +1475,7 @@ nav a {
 
                             <button id="install-app-btn"
     class="w-full relative overflow- p-[1px] rounded-2xl group transition-all duration-300 active:scale-[0.98]"
-    onclick="downloadRadioAppCrossDevice()">
+    onclick="installRadioApp()">
     <span class="absolute inset-0 bg-gradient-to-r from-[#00e5ff] via-[#8a2be2] to-[#f91155] opacity-80 group-hover:opacity-100 transition-opacity"></span>
     <span class="relative flex items-center justify-between w-full p-4 rounded-[15px] bg-[#111119]">
         <span class="flex items-center gap-4">
@@ -4566,90 +4575,94 @@ document.addEventListener("click", function (e) {
 </script>
 
 
+
+
+
 <script id="radio-cross-device-install">
-(function () {
+(() => {
     let deferredPrompt = null;
 
-    window.addEventListener("beforeinstallprompt", function (event) {
+    // Chrome/Edge/Android/Desktop PWA installation event.
+    window.addEventListener("beforeinstallprompt", (event) => {
         event.preventDefault();
         deferredPrompt = event;
     });
 
-    window.addEventListener("appinstalled", function () {
+    // Clear the prompt after successful installation.
+    window.addEventListener("appinstalled", () => {
         deferredPrompt = null;
-        showDownloadThankYou();
+        showInstallSuccess();
     });
 
-    function toast(message) {
+    function showInstallSuccess() {
+        const msg = "❤️ Thank you for installing Feather Live TV!";
         if (typeof window.showToast === "function") {
-            window.showToast(message);
+            window.showToast(msg);
             return;
         }
 
-        const old = document.getElementById("radio-download-toast");
+        const old = document.getElementById("install-success-toast");
         if (old) old.remove();
 
-        const el = document.createElement("div");
-        el.id = "radio-download-toast";
-        el.textContent = message;
-        el.style.cssText = `
-            position:fixed; left:50%; bottom:95px; transform:translateX(-50%);
-            z-index:999999; max-width:90vw; padding:12px 18px;
-            border-radius:999px; background:rgba(15,15,24,.96);
-            color:#fff; border:1px solid rgba(255,255,255,.14);
-            box-shadow:0 12px 40px rgba(0,0,0,.4);
-            font:700 13px system-ui; text-align:center;
-        `;
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 3200);
+        const toast = document.createElement("div");
+        toast.id = "install-success-toast";
+        toast.textContent = msg;
+        toast.style.cssText =
+            "position:fixed;left:50%;bottom:95px;transform:translateX(-50%);" +
+            "z-index:999999;padding:13px 20px;border-radius:999px;" +
+            "background:rgba(15,15,24,.96);color:#fff;" +
+            "border:1px solid rgba(255,255,255,.12);" +
+            "box-shadow:0 12px 40px rgba(0,0,0,.4);" +
+            "font:700 13px system-ui;white-space:nowrap;";
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3500);
     }
 
-    function showDownloadThankYou() {
-        toast("❤️ Thank you for downloading Feather Live TV!");
-    }
+    window.installRadioApp = async function () {
+        // If the app is already running standalone, it is already installed.
+        const standalone =
+            window.matchMedia("(display-mode: standalone)").matches ||
+            window.navigator.standalone === true;
 
-    window.downloadRadioAppCrossDevice = async function () {
+        if (standalone) {
+            showInstallSuccess();
+            return;
+        }
 
-        // 1. Android Chrome / Edge / supported browsers:
+        // Preferred path: native browser installation dialog.
         if (deferredPrompt) {
             try {
                 deferredPrompt.prompt();
-                const result = await deferredPrompt.userChoice;
+                const choice = await deferredPrompt.userChoice;
 
-                if (result && result.outcome === "accepted") {
-                    toast("🎉 Thank you! Feather Live TV is being installed.");
+                if (choice && choice.outcome === "accepted") {
+                    showInstallSuccess();
                 }
-            } catch (error) {
-                console.log("PWA install:", error);
+            } catch (err) {
+                console.error("PWA installation failed:", err);
             }
 
             deferredPrompt = null;
             return;
         }
 
-        // 2. iPhone/iPad Safari.
-        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-        const isStandalone =
-            window.matchMedia("(display-mode: standalone)").matches ||
-            window.navigator.standalone === true;
-
-        if (isIOS && !isStandalone) {
-            toast("📲 Tap Share ↑ → Add to Home Screen → Add");
+        // iOS Safari has no beforeinstallprompt API.
+        if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+            const msg = "📲 Tap Share ↑ → Add to Home Screen → Add";
+            if (typeof window.showToast === "function") window.showToast(msg);
+            else alert(msg);
             return;
         }
 
-        // 3. Desktop Chrome/Edge.
-        // Some desktop browsers expose the install command only through
-        // the browser menu rather than beforeinstallprompt.
-        const isDesktop = !/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
-
-        if (isDesktop) {
-            toast("💻 Open the browser menu ⋮ and choose Install Feather Live TV.");
-            return;
-        }
-
-        // 4. Android when browser hasn't supplied an install prompt yet.
-        toast("📲 Open your browser menu ⋮ → Install app / Add to Home screen.");
+        // No native prompt is available yet. This normally means:
+        // - page is not HTTPS/localhost, or
+        // - manifest/service worker isn't valid/available, or
+        // - browser doesn't currently consider the page installable.
+        const msg =
+            "Install is not available yet. Open Feather Live TV from its HTTPS website, " +
+            "then tap this button again.";
+        if (typeof window.showToast === "function") window.showToast(msg);
+        else alert(msg);
     };
 })();
 </script>
