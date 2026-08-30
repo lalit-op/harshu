@@ -880,6 +880,29 @@ nav a {
 }
 </style>
 
+
+<style id="radio-install-fix">
+#install-app-btn {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+#install-app-btn:active {
+    transform: scale(.985);
+}
+</style>
+
+
+<style id="download-radio-app-border-fix">
+#install-app-btn {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+#install-app-btn > span:first-child {
+    background: transparent !important;
+}
+</style>
+
 </head>
 <body>
 
@@ -1442,8 +1465,8 @@ nav a {
 
 
                             <button id="install-app-btn"
-    class="w-full relative overflow-hidden p-[1px] rounded-2xl group transition-all duration-300 active:scale-[0.98]"
-    onclick="triggerInstallPrompt()">
+    class="w-full relative overflow- p-[1px] rounded-2xl group transition-all duration-300 active:scale-[0.98]"
+    onclick="downloadRadioAppCrossDevice()">
     <span class="absolute inset-0 bg-gradient-to-r from-[#00e5ff] via-[#8a2be2] to-[#f91155] opacity-80 group-hover:opacity-100 transition-opacity"></span>
     <span class="relative flex items-center justify-between w-full p-4 rounded-[15px] bg-[#111119]">
         <span class="flex items-center gap-4">
@@ -4458,6 +4481,176 @@ document.addEventListener("click", function (e) {
             item.classList.remove("nav-chaos-hit", fx);
         }, 950);
     });
+})();
+</script>
+
+
+<script id="radio-install-fix">
+(function () {
+    let deferredInstallPrompt = null;
+
+    window.addEventListener("beforeinstallprompt", function (event) {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        window.__radioInstallPrompt = event;
+    });
+
+    window.addEventListener("appinstalled", function () {
+        deferredInstallPrompt = null;
+        window.__radioInstallPrompt = null;
+
+        const btn = document.getElementById("install-app-btn");
+        if (btn) {
+            btn.innerHTML = `
+                <span class="flex items-center justify-between w-full p-4 rounded-[15px] bg-[#111119]">
+                    <span class="flex items-center gap-4">
+                        <span class="w-12 h-12 shrink-0 rounded-full bg-emerald-400/15 flex items-center justify-center text-emerald-400">
+                            ✓
+                        </span>
+                        <span class="text-left">
+                            <span class="font-extrabold text-white block">Radio App Installed</span>
+                            <span class="text-[10px] text-gray-400 block mt-0.5">Feather Live TV is ready to use</span>
+                        </span>
+                    </span>
+                    <span class="text-[9px] font-black tracking-widest text-emerald-400">READY</span>
+                </span>`;
+        }
+    });
+
+    window.installRadioApp = async function () {
+        // Native Chrome/Edge install prompt.
+        if (deferredInstallPrompt) {
+            try {
+                await deferredInstallPrompt.prompt();
+                await deferredInstallPrompt.userChoice;
+            } catch (e) {
+                console.log("Install prompt:", e);
+            }
+            deferredInstallPrompt = null;
+            window.__radioInstallPrompt = null;
+            return;
+        }
+
+        // If another part of the app captured the prompt, use it.
+        if (window.__radioInstallPrompt) {
+            try {
+                await window.__radioInstallPrompt.prompt();
+                await window.__radioInstallPrompt.userChoice;
+            } catch (e) {}
+            window.__radioInstallPrompt = null;
+            return;
+        }
+
+        // Reuse the existing app function if it exists and isn't this function.
+        if (typeof window.triggerInstallPrompt === "function" &&
+            window.triggerInstallPrompt !== window.installRadioApp) {
+            try {
+                window.triggerInstallPrompt();
+                return;
+            } catch (e) {}
+        }
+
+        // Browser doesn't currently expose a prompt.
+        const msg =
+            "Install is not available from this page yet. " +
+            "Open this app over HTTPS in Chrome/Edge, then use ⋮ → Install app " +
+            "or Add to Home screen.";
+
+        if (typeof window.showToast === "function") {
+            window.showToast(msg);
+        } else {
+            alert(msg);
+        }
+    };
+})();
+</script>
+
+
+<script id="radio-cross-device-install">
+(function () {
+    let deferredPrompt = null;
+
+    window.addEventListener("beforeinstallprompt", function (event) {
+        event.preventDefault();
+        deferredPrompt = event;
+    });
+
+    window.addEventListener("appinstalled", function () {
+        deferredPrompt = null;
+        showDownloadThankYou();
+    });
+
+    function toast(message) {
+        if (typeof window.showToast === "function") {
+            window.showToast(message);
+            return;
+        }
+
+        const old = document.getElementById("radio-download-toast");
+        if (old) old.remove();
+
+        const el = document.createElement("div");
+        el.id = "radio-download-toast";
+        el.textContent = message;
+        el.style.cssText = `
+            position:fixed; left:50%; bottom:95px; transform:translateX(-50%);
+            z-index:999999; max-width:90vw; padding:12px 18px;
+            border-radius:999px; background:rgba(15,15,24,.96);
+            color:#fff; border:1px solid rgba(255,255,255,.14);
+            box-shadow:0 12px 40px rgba(0,0,0,.4);
+            font:700 13px system-ui; text-align:center;
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 3200);
+    }
+
+    function showDownloadThankYou() {
+        toast("❤️ Thank you for downloading Feather Live TV!");
+    }
+
+    window.downloadRadioAppCrossDevice = async function () {
+
+        // 1. Android Chrome / Edge / supported browsers:
+        if (deferredPrompt) {
+            try {
+                deferredPrompt.prompt();
+                const result = await deferredPrompt.userChoice;
+
+                if (result && result.outcome === "accepted") {
+                    toast("🎉 Thank you! Feather Live TV is being installed.");
+                }
+            } catch (error) {
+                console.log("PWA install:", error);
+            }
+
+            deferredPrompt = null;
+            return;
+        }
+
+        // 2. iPhone/iPad Safari.
+        const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+        const isStandalone =
+            window.matchMedia("(display-mode: standalone)").matches ||
+            window.navigator.standalone === true;
+
+        if (isIOS && !isStandalone) {
+            toast("📲 Tap Share ↑ → Add to Home Screen → Add");
+            return;
+        }
+
+        // 3. Desktop Chrome/Edge.
+        // Some desktop browsers expose the install command only through
+        // the browser menu rather than beforeinstallprompt.
+        const isDesktop = !/android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
+
+        if (isDesktop) {
+            toast("💻 Open the browser menu ⋮ and choose Install Feather Live TV.");
+            return;
+        }
+
+        // 4. Android when browser hasn't supplied an install prompt yet.
+        toast("📲 Open your browser menu ⋮ → Install app / Add to Home screen.");
+    };
 })();
 </script>
 
