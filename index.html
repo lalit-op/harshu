@@ -1235,7 +1235,7 @@
         .home-search input::placeholder { color: #64748b; }
         .home-search-count { flex: 0 0 auto; color:#94a3b8; font-size:10px; white-space:nowrap; }
         .home-install-btn {
-            display: block;
+            display: none;
             min-height: 44px;
             padding: 0 13px;
             border: 1px solid rgba(255,255,255,.10);
@@ -2569,55 +2569,31 @@ const ua = navigator.userAgent;
         }
     }, true); 
 
-    // PWA install flow. Chromium browsers expose beforeinstallprompt when the
-    // page is installable. We keep the Install button visible so the user
-    // always has a clear way to start installation.
+    // PWA: make the site installable as a standalone app.
     let deferredInstallPrompt = null;
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
-        window.navigator.standalone === true;
-
-    function updateInstallButton() {
-        if (!installAppBtn) return;
-        if (isStandalone) {
-            installAppBtn.textContent = '✓ Installed';
-            installAppBtn.disabled = true;
-            installAppBtn.setAttribute('aria-label', 'Feather Live TV is installed');
-        } else {
-            installAppBtn.textContent = '📲 Install App';
-            installAppBtn.disabled = false;
-            installAppBtn.setAttribute('aria-label', 'Install Feather Live TV app');
-        }
-    }
-
     window.addEventListener('beforeinstallprompt', (event) => {
         event.preventDefault();
         deferredInstallPrompt = event;
-        updateInstallButton();
         if (installAppBtn) installAppBtn.classList.add('show');
     });
 
     if (installAppBtn) {
-        updateInstallButton();
         installAppBtn.addEventListener('click', async () => {
-            if (isStandalone) return;
             if (!deferredInstallPrompt) {
-                showToast('Open browser menu → Install app / Add to Home screen');
+                showToast('Use your browser menu → Add to Home screen');
                 return;
             }
             deferredInstallPrompt.prompt();
             const choice = await deferredInstallPrompt.userChoice;
             deferredInstallPrompt = null;
-            if (choice && choice.outcome === 'accepted') {
-                installAppBtn.textContent = '✓ Installed';
-                installAppBtn.disabled = true;
-                showToast('Feather Live TV installed!');
-            }
+            installAppBtn.classList.remove('show');
+            if (choice && choice.outcome === 'accepted') showToast('App installed!');
         });
     }
 
     window.addEventListener('appinstalled', () => {
         deferredInstallPrompt = null;
-        updateInstallButton();
+        if (installAppBtn) installAppBtn.classList.remove('show');
         showToast('Feather Live TV installed');
     });
 
