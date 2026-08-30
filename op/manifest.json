@@ -1,0 +1,35 @@
+{
+  "name": "Feather Live TV",
+  "short_name": "Feather TV",
+  "description": "Live TV, radio and entertainment channels",
+  "start_url": "./feather_live_tv.html",
+  "id": "./feather_live_tv.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone"
+  ],
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#020617",
+  "lang": "en-IN",
+  "categories": [
+    "entertainment",
+    "tv",
+    "music"
+  ],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
