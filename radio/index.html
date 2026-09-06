@@ -19,8 +19,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Browser Favicon -->
-    <link rel="icon" type="image/png" href="ChatGPT Image Sep 6, 2026, 06_34_04 PM.png">
-    <link rel="apple-touch-icon" href="ChatGPT Image Sep 6, 2026, 06_34_04 PM.png">
+    <link rel="icon" type="image/png" href="ChatGPT Image Sep 6, 2026, 07_36_54 PM.png">
+    <link rel="apple-touch-icon" href="ChatGPT Image Sep 6, 2026, 07_36_54 PM.png">
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#09090e">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -717,7 +717,7 @@
 /* Keep PWA branding synchronized with the browser favicon. */
 document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.setAttribute('data-pwa', 'harsh-it');
-    const appLogo = 'ChatGPT Image Sep 6, 2026, 06_34_04 PM.png';
+    const appLogo = 'ChatGPT Image Sep 6, 2026, 07_36_54 PM.png';
     document.querySelectorAll('img[src^="data:image/svg+xml"]').forEach((image) => {
         image.src = appLogo;
     });
@@ -1779,7 +1779,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 10, name: "Fun Asia Radio", slogan: "Bollywood Music • Entertainment • 24×7 Live", location: "Internet", url: "https://funasia.streamguys1.com/live-1?_=1545125406418", color: "#ff9c33", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/funasia1049.png", category: "Bollywood" },
             { id: 11, name: "Caravan Radio", slogan: "Evergreen Bollywood Hits • 24×7 Live", location: "Internet", url: "https://streamlky.alsolnet.com/radiocaravanaudio", color: "#ffb347", isPopular: true, isTrending: true, isFavorite: false, logo: "https://radiosindia.com/images/radiocaravan.jpg", category: "Bollywood" },
             { id: 16, name: "Bollywood Best Songs", slogan: "Best Bollywood Hits • 2010s • Non-Stop Music", location: "Internet", url: "https://nl4.mystreaming.net/uber/bollywood2010s/icecast.audio", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://yt3.googleusercontent.com/I-CghOFgqadXg_q2BIvsXfyEmlJDo5ZevM-IqINs0MVBHcHM56hZ88gsrHZdyDcIDACgBOjq=w544-c-h544-k-c0x00ffffff-no-l90-rj", category: "Bollywood" },
-            { id: 17, name: "Radio Saavan", slogan: "Hindi Music • Bollywood Hits • 24×7 Live", location: "Internet", url: "https://sp14.instainternet.com/8268/stream", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://radiosaavan.in/assets/img/logo.png", category: "Bollywood" },
+            { id: 17, name: "Radio Saavan", slogan: "Hindi Music • Bollywood Hits • 24×7 Live", location: "Internet", url: "https://sp14.instainternet.com/8268/stream", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT9t5M7hN8KQWz5bhactuXoODuBBLMNbpVW4VlB4d54Un9gaQITqpBinv8&s=10", category: "Bollywood" },
             { id: 101, name: "Bhakti Sangeet", slogan: "Devotional • LIVE RADIO", location: "India", url: "https://stream-291.surfernetwork.com/ut3kgm1vsa0uv", color: "#ffb800", isPopular: false, isTrending: false, isFavorite: false, logo: "https://static.mytuner.mobi/media/radios-150px/wczz4pqgu5fa.jpeg", category: "Bhakti" },
             { id: 102, name: "Bhaktiworld Media Shiva", slogan: "Devotional • LIVE RADIO", location: "India", url: "http://hot.out.airtime.pro:8000/hot_a", color: "#ff6600", isPopular: false, isTrending: false, isFavorite: false, logo: "https://static.mytuner.mobi/media/radios-150px/446/bhakti-world-shiva.cc853b30.png", category: "Bhakti" },
             { id: 103, name: "Hits Of Asha Bhosle", slogan: "Evergreen Hindi Hits", location: "Vadodara", url: "https://stream.zeno.fm/qd0ddu5qrdktv", color: "#f91155", isPopular: false, isTrending: false, isFavorite: false, logo: "https://static.mytuner.mobi/media/tvos_radios/589/hits-of-asha-bhosle.35abf741.jpg", category: "Bollywood" },
@@ -2956,16 +2956,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 "background_color": "#09090e",
                 "theme_color": "#09090e",
                 "icons": [
-                    { "src": "ChatGPT Image Sep 6, 2026, 06_34_04 PM.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-                    { "src": "ChatGPT Image Sep 6, 2026, 06_34_04 PM.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+                    { "src": "ChatGPT Image Sep 6, 2026, 07_36_54 PM.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+                    { "src": "ChatGPT Image Sep 6, 2026, 07_36_54 PM.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
                 ]
             };
             
             const manifestData = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
-            const manifestLink = document.createElement('link');
+            const manifestLink = document.getElementById('inline-pwa-manifest') || document.createElement('link');
             manifestLink.rel = 'manifest';
             manifestLink.href = manifestData;
-            document.head.appendChild(manifestLink);
+            if (!manifestLink.parentNode) document.head.appendChild(manifestLink);
 
             // Install prompt logic
             const installBtn = document.getElementById('install-app-btn');
