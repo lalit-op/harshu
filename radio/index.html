@@ -1,6 +1,10 @@
 <!DOCTYPE html><html lang="en"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <link id="inline-pwa-manifest" rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22id%22%3A%22./%22%2C%22name%22%3A%22Harsh-IT%22%2C%22short_name%22%3A%22Harsh-IT%22%2C%22description%22%3A%22Harsh-IT%20music%20and%20radio%20player%22%2C%22start_url%22%3A%22./%22%2C%22scope%22%3A%22./%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%2309090e%22%2C%22theme_color%22%3A%22%2309090e%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage/svg%2Bxml%3Bcharset%3Dutf-8%2C%253Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%27512%27%20height%3D%27512%27%20viewBox%3D%270%200%20512%20512%27%253E%253Cdefs%253E%253ClinearGradient%20id%3D%27g%27%20x1%3D%270%2525%27%20y1%3D%270%2525%27%20x2%3D%27100%2525%27%20y2%3D%27100%2525%27%253E%253Cstop%20offset%3D%270%2525%27%20stop-color%3D%27%2523681cff%27/%253E%253Cstop%20offset%3D%2750%2525%27%20stop-color%3D%27%2523f91155%27/%253E%253Cstop%20offset%3D%27100%2525%27%20stop-color%3D%27%2523ffb800%27/%253E%253C/linearGradient%253E%253Cfilter%20id%3D%27s%27%253E%253CfeDropShadow%20dx%3D%270%27%20dy%3D%278%27%20stdDeviation%3D%2712%27%20flood-color%3D%27%2523f91155%27%20flood-opacity%3D%270.4%27/%253E%253C/filter%253E%253C/defs%253E%253Crect%20width%3D%27512%27%20height%3D%27512%27%20rx%3D%27128%27%20fill%3D%27url%28%2523g%29%27/%253E%253Cpath%20d%3D%27M85%20300V212M170%20360V152M256%20440V72M342%20360V152M427%20300V212%27%20fill%3D%27none%27%20stroke%3D%27%2523fff%27%20stroke-width%3D%2744%27%20stroke-linecap%3D%27round%27%20stroke-linejoin%3D%27round%27%20filter%3D%27url%28%2523s%29%27/%253E%253C/svg%253E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image/svg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Harsh-IT</title>
     
     <!-- Load Tailwind CSS -->
@@ -15,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Browser Favicon -->
-       <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23681cff'/%3E%3Cstop offset='50%25' stop-color='%23f91155'/%3E%3Cstop offset='100%25' stop-color='%23ffb800'/%3E%3C/linearGradient%3E%3Cfilter id='s'%3E%3CfeDropShadow dx='0' dy='8' stdDeviation='12' flood-color='%23f91155' flood-opacity='0.4'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='128' fill='url(%23g)'/%3E%3Cpath d='M85 300V212M170 360V152M256 440V72M342 360V152M427 300V212' fill='none' stroke='%23fff' stroke-width='44' stroke-linecap='round' stroke-linejoin='round' filter='url(%23s)'/%3E%3C/svg%3E">
+       <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;512&#x27; height=&#x27;512&#x27; viewBox=&#x27;0 0 512 512&#x27;%3E%3Cdefs%3E%3ClinearGradient id=&#x27;g&#x27; x1=&#x27;0%25&#x27; y1=&#x27;0%25&#x27; x2=&#x27;100%25&#x27; y2=&#x27;100%25&#x27;%3E%3Cstop offset=&#x27;0%25&#x27; stop-color=&#x27;%23681cff&#x27;/%3E%3Cstop offset=&#x27;50%25&#x27; stop-color=&#x27;%23f91155&#x27;/%3E%3Cstop offset=&#x27;100%25&#x27; stop-color=&#x27;%23ffb800&#x27;/%3E%3C/linearGradient%3E%3Cfilter id=&#x27;s&#x27;%3E%3CfeDropShadow dx=&#x27;0&#x27; dy=&#x27;8&#x27; stdDeviation=&#x27;12&#x27; flood-color=&#x27;%23f91155&#x27; flood-opacity=&#x27;0.4&#x27;/%3E%3C/filter%3E%3C/defs%3E%3Crect width=&#x27;512&#x27; height=&#x27;512&#x27; rx=&#x27;128&#x27; fill=&#x27;url(%23g)&#x27;/%3E%3Cpath d=&#x27;M85 300V212M170 360V152M256 440V72M342 360V152M427 300V212&#x27; fill=&#x27;none&#x27; stroke=&#x27;%23fff&#x27; stroke-width=&#x27;44&#x27; stroke-linecap=&#x27;round&#x27; stroke-linejoin=&#x27;round&#x27; filter=&#x27;url(%23s)&#x27;/%3E%3C/svg%3E">
     <!-- PWA Meta Tags -->
     <meta name="theme-color" content="#09090e">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -701,6 +705,19 @@
 }
 </style>
 
+
+<style>
+/* Single-file PWA polish */
+#sidebar-logo-container img,
+#install-toast img,
+#ios-install-toast img { image-rendering: auto; }
+</style>
+<script>
+/* Keep PWA branding synchronized with the browser favicon. */
+document.addEventListener('DOMContentLoaded', () => {
+    document.documentElement.setAttribute('data-pwa', 'harsh-it');
+});
+</script>
 </head>
 <body>
 
@@ -712,10 +729,8 @@
     <!-- ================= INSTALL APP ANIMATED TOAST ================= -->
     <div id="install-toast" class="fixed top-0 left-0 right-0 z-[200] transform -translate-y-[150%] transition-transform duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex justify-center p-4 pt-[calc(env(safe-area-inset-top)+16px)] pointer-events-none">
         <div class="bg-card/95 backdrop-blur-xl border border-primary/40 p-3 pr-4 rounded-[20px] shadow-[0_15px_40px_rgba(249,17,85,0.4)] flex items-center gap-3 w-[95%] max-w-sm pointer-events-auto">
-            <div class="w-12 h-12 rounded-[12px] bg-gradient-to-tr from-[#681cff] via-[#f91155] to-[#ffb800] p-[1.5px] shrink-0">
-                <div class="w-full h-full bg-[#111] rounded-[10px] flex items-center justify-center">
-                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                </div>
+            <div class="w-12 h-12 rounded-[12px] overflow-hidden shrink-0 shadow-primary">
+                <img src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;512&#x27; height=&#x27;512&#x27; viewBox=&#x27;0 0 512 512&#x27;%3E%3Cdefs%3E%3ClinearGradient id=&#x27;g&#x27; x1=&#x27;0%25&#x27; y1=&#x27;0%25&#x27; x2=&#x27;100%25&#x27; y2=&#x27;100%25&#x27;%3E%3Cstop offset=&#x27;0%25&#x27; stop-color=&#x27;%23681cff&#x27;/%3E%3Cstop offset=&#x27;50%25&#x27; stop-color=&#x27;%23f91155&#x27;/%3E%3Cstop offset=&#x27;100%25&#x27; stop-color=&#x27;%23ffb800&#x27;/%3E%3C/linearGradient%3E%3Cfilter id=&#x27;s&#x27;%3E%3CfeDropShadow dx=&#x27;0&#x27; dy=&#x27;8&#x27; stdDeviation=&#x27;12&#x27; flood-color=&#x27;%23f91155&#x27; flood-opacity=&#x27;0.4&#x27;/%3E%3C/filter%3E%3C/defs%3E%3Crect width=&#x27;512&#x27; height=&#x27;512&#x27; rx=&#x27;128&#x27; fill=&#x27;url(%23g)&#x27;/%3E%3Cpath d=&#x27;M85 300V212M170 360V152M256 440V72M342 360V152M427 300V212&#x27; fill=&#x27;none&#x27; stroke=&#x27;%23fff&#x27; stroke-width=&#x27;44&#x27; stroke-linecap=&#x27;round&#x27; stroke-linejoin=&#x27;round&#x27; filter=&#x27;url(%23s)&#x27;/%3E%3C/svg%3E" class="w-full h-full object-cover" alt="Harsh-IT logo">
             </div>
             <div class="flex-grow">
                 <h4 class="text-white font-bold text-[13px] leading-tight">Install Harsh-IT</h4>
@@ -736,10 +751,8 @@
             <button onclick="dismissIosToast()" class="absolute top-3 right-3 text-gray-500 active:text-white md:hover:text-white p-2">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
-            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#681cff] via-[#f91155] to-[#ffb800] p-[1.5px] shrink-0 mb-1 shadow-lg">
-                <div class="w-full h-full bg-[#111] rounded-[14px] flex items-center justify-center">
-                    <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                </div>
+            <div class="w-14 h-14 rounded-2xl overflow-hidden shrink-0 mb-1 shadow-lg">
+                <img src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;512&#x27; height=&#x27;512&#x27; viewBox=&#x27;0 0 512 512&#x27;%3E%3Cdefs%3E%3ClinearGradient id=&#x27;g&#x27; x1=&#x27;0%25&#x27; y1=&#x27;0%25&#x27; x2=&#x27;100%25&#x27; y2=&#x27;100%25&#x27;%3E%3Cstop offset=&#x27;0%25&#x27; stop-color=&#x27;%23681cff&#x27;/%3E%3Cstop offset=&#x27;50%25&#x27; stop-color=&#x27;%23f91155&#x27;/%3E%3Cstop offset=&#x27;100%25&#x27; stop-color=&#x27;%23ffb800&#x27;/%3E%3C/linearGradient%3E%3Cfilter id=&#x27;s&#x27;%3E%3CfeDropShadow dx=&#x27;0&#x27; dy=&#x27;8&#x27; stdDeviation=&#x27;12&#x27; flood-color=&#x27;%23f91155&#x27; flood-opacity=&#x27;0.4&#x27;/%3E%3C/filter%3E%3C/defs%3E%3Crect width=&#x27;512&#x27; height=&#x27;512&#x27; rx=&#x27;128&#x27; fill=&#x27;url(%23g)&#x27;/%3E%3Cpath d=&#x27;M85 300V212M170 360V152M256 440V72M342 360V152M427 300V212&#x27; fill=&#x27;none&#x27; stroke=&#x27;%23fff&#x27; stroke-width=&#x27;44&#x27; stroke-linecap=&#x27;round&#x27; stroke-linejoin=&#x27;round&#x27; filter=&#x27;url(%23s)&#x27;/%3E%3C/svg%3E" class="w-full h-full object-cover" alt="Harsh-IT logo">
             </div>
             <h4 class="text-white font-bold text-center text-[15px]">Install Harsh-IT</h4>
             <p class="text-xs text-gray-300 text-center px-1 leading-relaxed">
@@ -951,14 +964,8 @@
         <nav id="sidebar" class="fixed md:relative bottom-0 left-0 w-full md:w-64 h-[calc(60px+env(safe-area-inset-bottom))] md:h-full bg-[var(--app-bg)]/95 backdrop-blur-xl md:bg-[var(--card-bg)] flex justify-around md:flex-col md:justify-start items-center md:items-stretch px-2 md:px-4 pb-[env(safe-area-inset-bottom)] md:pb-8 pt-1 md:pt-8 z-[60] shadow-[0_-10px_30px_rgba(0,0,0,0.5)] md:shadow-none md:border-r border-white/5 shrink-0 transition-all duration-300">
             <!-- Desktop Logo & Toggle -->
             <button onclick="toggleSidebar()" id="sidebar-logo-container" class="hidden md:flex items-center justify-start gap-3 md:gap-4 mb-10 overflow-hidden w-full group rounded-xl md:hover:bg-white/5 transition-colors px-2 py-2 md:px-4 focus:outline-none shrink-0">
-                <div class="w-10 h-10 rounded-[10px] bg-gradient-to-tr from-[#681cff] via-[#f91155] to-[#ffb800] flex items-center justify-center shadow-[0_4px_15px_rgba(249,17,85,0.4)] shrink-0 group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-                    <svg class="w-5 h-5 text-white drop-shadow-sm relative z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M4 14v-4"></path>
-                        <path d="M8 17V7"></path>
-                        <path d="M12 21V3"></path>
-                        <path d="M16 17V7"></path>
-                        <path d="M20 14v-4"></path>
-                    </svg>
+                <div class="w-10 h-10 rounded-[10px] bg-transparent flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300 relative overflow-hidden">
+                    <img src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; width=&#x27;512&#x27; height=&#x27;512&#x27; viewBox=&#x27;0 0 512 512&#x27;%3E%3Cdefs%3E%3ClinearGradient id=&#x27;g&#x27; x1=&#x27;0%25&#x27; y1=&#x27;0%25&#x27; x2=&#x27;100%25&#x27; y2=&#x27;100%25&#x27;%3E%3Cstop offset=&#x27;0%25&#x27; stop-color=&#x27;%23681cff&#x27;/%3E%3Cstop offset=&#x27;50%25&#x27; stop-color=&#x27;%23f91155&#x27;/%3E%3Cstop offset=&#x27;100%25&#x27; stop-color=&#x27;%23ffb800&#x27;/%3E%3C/linearGradient%3E%3Cfilter id=&#x27;s&#x27;%3E%3CfeDropShadow dx=&#x27;0&#x27; dy=&#x27;8&#x27; stdDeviation=&#x27;12&#x27; flood-color=&#x27;%23f91155&#x27; flood-opacity=&#x27;0.4&#x27;/%3E%3C/filter%3E%3C/defs%3E%3Crect width=&#x27;512&#x27; height=&#x27;512&#x27; rx=&#x27;128&#x27; fill=&#x27;url(%23g)&#x27;/%3E%3Cpath d=&#x27;M85 300V212M170 360V152M256 440V72M342 360V152M427 300V212&#x27; fill=&#x27;none&#x27; stroke=&#x27;%23fff&#x27; stroke-width=&#x27;44&#x27; stroke-linecap=&#x27;round&#x27; stroke-linejoin=&#x27;round&#x27; filter=&#x27;url(%23s)&#x27;/%3E%3C/svg%3E" class="w-10 h-10 rounded-[10px] object-cover" alt="Harsh-IT logo">
                 </div>
                 <div id="sidebar-logo-text" class="flex-grow flex items-center justify-start hidden md:flex transition-opacity">
                     <h1 class="text-2xl font-black tracking-tight whitespace-nowrap logo-text-gradient drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">Harsh - IT</h1>
@@ -1767,7 +1774,7 @@
             { id: 10, name: "Fun Asia Radio", slogan: "Bollywood Music • Entertainment • 24×7 Live", location: "Internet", url: "https://funasia.streamguys1.com/live-1?_=1545125406418", color: "#ff9c33", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/funasia1049.png", category: "Bollywood" },
             { id: 11, name: "Caravan Radio", slogan: "Evergreen Bollywood Hits • 24×7 Live", location: "Internet", url: "https://streamlky.alsolnet.com/radiocaravanaudio", color: "#ffb347", isPopular: true, isTrending: true, isFavorite: false, logo: "https://radiosindia.com/images/radiocaravan.jpg", category: "Bollywood" },
             { id: 16, name: "Bollywood Best Songs", slogan: "Best Bollywood Hits • 2010s • Non-Stop Music", location: "Internet", url: "https://nl4.mystreaming.net/uber/bollywood2010s/icecast.audio", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://yt3.googleusercontent.com/I-CghOFgqadXg_q2BIvsXfyEmlJDo5ZevM-IqINs0MVBHcHM56hZ88gsrHZdyDcIDACgBOjq=w544-c-h544-k-c0x00ffffff-no-l90-rj", category: "Bollywood" },
-            { id: 17, name: "Radio Saavan", slogan: "Hindi Music • Bollywood Hits • 24×7 Live", location: "Internet", url: "https://sp14.instainternet.com/8268/stream", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://play-lh.googleusercontent.com/w04VLDxLwVHlK3vT07_2AFW0ShH6C34Nyu8-Fa81kiItwBqHmlDXra0vfxILJFgn19rcsrUDsh6T1ti0s1icYo8=w240-h480-rw", category: "Bollywood" },
+            { id: 17, name: "Radio Saavan", slogan: "Hindi Music • Bollywood Hits • 24×7 Live", location: "Internet", url: "https://sp14.instainternet.com/8268/stream", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://radiosaavan.in/assets/img/logo.png", category: "Bollywood" },
             { id: 101, name: "Bhakti Sangeet", slogan: "Devotional • LIVE RADIO", location: "India", url: "https://stream-291.surfernetwork.com/ut3kgm1vsa0uv", color: "#ffb800", isPopular: false, isTrending: false, isFavorite: false, logo: "https://static.mytuner.mobi/media/radios-150px/wczz4pqgu5fa.jpeg", category: "Bhakti" },
             { id: 102, name: "Bhaktiworld Media Shiva", slogan: "Devotional • LIVE RADIO", location: "India", url: "http://hot.out.airtime.pro:8000/hot_a", color: "#ff6600", isPopular: false, isTrending: false, isFavorite: false, logo: "https://static.mytuner.mobi/media/radios-150px/446/bhakti-world-shiva.cc853b30.png", category: "Bhakti" },
             { id: 103, name: "Hits Of Asha Bhosle", slogan: "Evergreen Hindi Hits", location: "Vadodara", url: "https://stream.zeno.fm/qd0ddu5qrdktv", color: "#f91155", isPopular: false, isTrending: false, isFavorite: false, logo: "https://static.mytuner.mobi/media/tvos_radios/589/hits-of-asha-bhosle.35abf741.jpg", category: "Bollywood" },
@@ -2934,17 +2941,16 @@
             // Robust dynamic manifest generation using Data URI
             const manifest = {
                 "id": "/",
-                "name": "Harsh-IT Radio App",
+                "name": "Harsh-IT",
                 "short_name": "Harsh-IT",
-                "description": "Premium Cyberpunk Radio App",
+                "description": "Harsh-IT music and radio player",
                 "start_url": "./",
                 "scope": ".",
                 "display": "standalone",
                 "background_color": "#09090e",
-                "theme_color": "#f91155",
+                "theme_color": "#09090e",
                 "icons": [
-                    { "src": "https://api.dicebear.com/9.x/shapes/svg?seed=Radio&backgroundColor=09090e", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
-                    { "src": "https://api.dicebear.com/9.x/shapes/svg?seed=Radio&backgroundColor=09090e", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+                    { "src": "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23681cff'/%3E%3Cstop offset='50%25' stop-color='%23f91155'/%3E%3Cstop offset='100%25' stop-color='%23ffb800'/%3E%3C/linearGradient%3E%3Cfilter id='s'%3E%3CfeDropShadow dx='0' dy='8' stdDeviation='12' flood-color='%23f91155' flood-opacity='0.4'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='128' fill='url(%23g)'/%3E%3Cpath d='M85 300V212M170 360V152M256 440V72M342 360V152M427 300V212' fill='none' stroke='%23fff' stroke-width='44' stroke-linecap='round' stroke-linejoin='round' filter='url(%23s)'/%3E%3C/svg%3E", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any maskable" }
                 ]
             };
             
