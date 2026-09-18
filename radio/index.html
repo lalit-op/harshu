@@ -629,7 +629,18 @@
             }
         }
 
-    </style>
+    
+/* Perfectly circular profile avatars */
+#profile-avatar,
+#nav-profile-img,
+#onboarding-avatar-preview {
+    border-radius: 50% !important;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+</style>
 
 <style>
 @media (max-width: 767px) {
@@ -1773,7 +1784,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 3, name: "Bollywood 2010s", slogan: "Live Radio", location: "Internet", url: "https://drive.uber.radio/uber/bollywood2010s/icecast.audio", color: "#8b5cf6", isPopular: true, isTrending: true, isFavorite: false, logo: "https://liveradios.in/wp-content/uploads/br1.jpg", category: "Bollywood" },
             { id: 4, name: "Mirchi Top 20", slogan: "Bollywood Hits", location: "Internet", url: "https://bhs.edge.mystreaming.net/uber/bollywoodnow/icecast.audio", color: "#ff3c78", isPopular: true, isTrending: true, isFavorite: false, logo: "https://liveradios.in/wp-content/uploads/mirchitop20.jpg", category: "Bollywood" },
             { id: 5, name: "DesiZone Radio", slogan: "24x7 Bollywood Hits", location: "Internet", url: "https://www.desizoneradio.com/relay1", color: "#e83e8c", isPopular: true, isTrending: true, isFavorite: false, logo: "https://www.desizoneradio.com/images/logo.png", category: "Bollywood" },
-            { id: 6, name: "Red FM 93.5", slogan: "Bajaate Raho", location: "India", url: "https://stream-281.surfernetwork.com/9phrkb1e3v8uv" color: "#ff3b3b", isPopular: true, isTrending: true, isFavorite: false, logo: "https://radiobarfi.com/wp-content/uploads/2024/04/Red-FM-93.5-Live-Online.png", category: "Bollywood" },
+            { id: 6, name: "Red FM 93.5", slogan: "Bajaate Raho", location: "India", url: "https://stream-281.surfernetwork.com/9phrkb1e3v8uv", color: "#ff3b3b", isPopular: true, isTrending: true, isFavorite: false, logo: "https://radiobarfi.com/wp-content/uploads/2024/04/Red-FM-93.5-Live-Online.png", category: "Bollywood" },
             { id: 8, name: "Bollywood Love", slogan: "24×7 Romantic Bollywood Songs", location: "Internet", url: "https://drive.uber.radio/uber/bollywoodlove/icecast.audio", color: "#ff4d88", isPopular: true, isTrending: true, isFavorite: false, logo: "https://liveradios.in/wp-content/uploads/br3.jpg", category: "Bollywood" },
             { id: 9, name: "New Hits of Bollywood", slogan: "Latest Bollywood Hits • Non-Stop Music", location: "Internet", url: "https://stream-291.zeno.fm/rqqps6cbe3quv?zt=eyJhbGciOiJIUzI1NiJ9.eyJzdHJlYW0iOiJycXFwczZjYmUzcXV2IiwiaG9zdCI6InN0cmVhbS0yOTEuemVuby5mbSIsInJ0dGwiOjUsImp0aSI6IjVtdVJ4cUFvVGFTUzd0QU5ST3NpVnciLCJpYXQiOjE3ODAxNDgzNTYsImV4cCI6MTc4MDE0ODQxNn0.MIIOOVJvU9tBYHLTSN9NxOFlT1oN_wapAE1aNb4sbuw", color: "#ff5757", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/Hits-Of-Bollywood.jpg", category: "Bollywood" },
             { id: 10, name: "Fun Asia Radio", slogan: "Bollywood Music • Entertainment • 24×7 Live", location: "Internet", url: "https://funasia.streamguys1.com/live-1?_=1545125406418", color: "#ff9c33", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/funasia1049.png", category: "Bollywood" },
@@ -1827,7 +1838,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Profile State
         let userName = localStorage.getItem('harsh_it_username') || 'User';
-        let userAvatarSeed = localStorage.getItem('harsh_it_avatar_seed') || 'Unknown';
+        let userAvatarSeed = localStorage.getItem('harsh_it_avatar_seed') || 'custom_1';
         let userAvatarBg = localStorage.getItem('harsh_it_avatar_bg') || 'transparent';
         let personalizedTrendingIds = [];
 
@@ -1975,6 +1986,15 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'candy', name: 'Candy' }
         ];
 
+        // --- Custom user avatars ---
+        // Replace these with direct image URLs if a Google Photos share-page URL
+        // does not load directly inside an <img> element.
+        const CUSTOM_AVATARS = [
+            { id: 'custom_1', name: 'Custom Avatar 1', src: 'https://photos.app.goo.gl/YW5ZmixXXawyqNQF6' },
+            { id: 'custom_2', name: 'Custom Avatar 2', src: 'https://photos.app.goo.gl/7pptPqccTP3M4uBF9' },
+            { id: 'custom_3', name: 'Custom Avatar 3', src: 'https://photos.app.goo.gl/VCAuvA29d45236c17' }
+        ];
+
         const CUTE_SEEDS = [
             "Happy-Smile", "Cool-Sunglasses", "Love-Heart", "Star-Power",
             "Party-Fun", "Fire-Vibe", "Rainbow-Dream", "Coffee-Mood",
@@ -2085,8 +2105,52 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: '111827', name: 'Dark', value: '111827' },
             { id: 'f8fafc', name: 'White', value: 'f8fafc' }
         ];
+// --- Default Rangoli Avatar ---
+const DEFAULT_RANGOLI_AVATAR = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="70%">
+      <stop offset="0%" stop-color="#171722"/>
+      <stop offset="100%" stop-color="#08080d"/>
+    </radialGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="256" cy="256" r="256" fill="url(#bg)"/>
+  <g transform="translate(256 256)" fill="none" stroke-linecap="round" filter="url(#glow)">
+    <circle r="190" stroke="#ffb800" stroke-width="8"/>
+    <circle r="150" stroke="#f91155" stroke-width="7"/>
+    <circle r="112" stroke="#00e5ff" stroke-width="7"/>
+    <circle r="72" stroke="#b200ff" stroke-width="7"/>
+    <g stroke-width="7">
+      <path d="M0-190L0-72M0 72L0 190M-190 0L-72 0M72 0L190 0" stroke="#ffb800"/>
+      <path d="M-134-134L-51-51M51 51L134 134M134-134L51-51M-51 51L-134 134" stroke="#f91155"/>
+      <path d="M0-150C-45-105-45-45 0 0C45-45 45-105 0-150Z" stroke="#00e5ff"/>
+      <path d="M0 150C-45 105-45 45 0 0C45 45 45 105 0 150Z" stroke="#00e5ff"/>
+      <path d="M-150 0C-105-45-45-45 0 0C-45 45-105 45-150 0Z" stroke="#b200ff"/>
+      <path d="M150 0C105-45 45-45 0 0C45 45 105 45 150 0Z" stroke="#b200ff"/>
+    </g>
+    <circle r="28" fill="#ffcc33" stroke="#fff" stroke-width="5"/>
+  </g>
+  <circle cx="256" cy="256" r="222" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
+</svg>
+`)}`;
+
+function rangoliAvatarUrl() {
+    return DEFAULT_RANGOLI_AVATAR;
+}
+
+
+
 
         function avatarUrl(seed = userAvatarSeed, bg = userAvatarBg) {
+            const custom = CUSTOM_AVATARS.find(a => a.id === seed);
+            if (custom) return custom.src;
+
+            if (!seed || seed === 'Unknown' || seed === 'Rangoli') return rangoliAvatarUrl();
+
             const bgParam = bg === 'transparent' ? 'transparent' : bg;
             return `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${bgParam}`;
         }
@@ -2109,12 +2173,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function renderAvatarGrid() {
             const grid = document.getElementById('avatar-grid');
-            if(grid && grid.children.length === 0) {
-                grid.innerHTML = CUTE_SEEDS.map(seed => `
-                    <button onclick="selectAvatar('${seed}')" type="button" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 md:hover:border-primary md:hover:bg-white/10 active:scale-95 transition-all focus:outline-none flex-shrink-0 relative overflow-hidden group">
-                        <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=${seed}&backgroundColor=transparent" class="w-full h-full object-cover md:group-hover:scale-110 transition-transform" alt="${seed} cartoon avatar">
+            if (grid && grid.children.length === 0) {
+                const customHtml = CUSTOM_AVATARS.map((avatar, index) => `
+                    <button onclick="selectAvatar('${avatar.id}')" type="button"
+                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border ${index === 0 ? 'border-primary ring-2 ring-primary/40' : 'border-white/10'} md:hover:border-primary md:hover:bg-white/10 active:scale-95 transition-all focus:outline-none flex-shrink-0 relative overflow-hidden group"
+                        title="${avatar.name}${index === 0 ? ' — Default' : ''}">
+                        <img src="${avatar.src}"
+                            class="w-full h-full object-cover rounded-full md:group-hover:scale-110 transition-transform"
+                            alt="${avatar.name}">
                     </button>
                 `).join('');
+
+                const oldHtml = CUTE_SEEDS.map(seed => `
+                    <button onclick="selectAvatar('${seed}')" type="button"
+                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 md:hover:border-primary md:hover:bg-white/10 active:scale-95 transition-all focus:outline-none flex-shrink-0 relative overflow-hidden group">
+                        <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=${seed}&backgroundColor=transparent"
+                            class="w-full h-full object-cover rounded-full md:group-hover:scale-110 transition-transform"
+                            alt="${seed} cartoon avatar">
+                    </button>
+                `).join('');
+
+                grid.innerHTML = customHtml + oldHtml;
             }
         }
 
@@ -2135,12 +2214,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function shuffleAvatar() {
-            userAvatarSeed = CUTE_SEEDS[Math.floor(Math.random() * CUTE_SEEDS.length)];
+            const allAvatarIds = [
+                ...CUSTOM_AVATARS.map(a => a.id),
+                ...CUTE_SEEDS
+            ];
+            userAvatarSeed = allAvatarIds[Math.floor(Math.random() * allAvatarIds.length)];
             document.getElementById('onboarding-avatar-preview').src = avatarUrl();
-            
+
             const inputVal = document.getElementById('onboarding-name-input').value.trim();
-            if(!inputVal) {
-                document.getElementById('onboarding-name-input').placeholder = "Random Emoji / Cartoon Avatar Selected!";
+            if (!inputVal) {
+                document.getElementById('onboarding-name-input').placeholder = "Random Avatar Selected!";
             }
         }
 
@@ -3302,7 +3385,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // --- Audio Logic ---
+        
+// --- Stream URL safety helpers ---
+function normalizeStreamUrl(value) {
+    if (typeof value !== "string") return "";
+    return value.trim().replace(/[\r\n\t]+/g, "");
+}
+
+function isSurferNetworkUrl(value) {
+    try {
+        const u = new URL(value);
+        return /\.surfernetwork\.com$/i.test(u.hostname);
+    } catch {
+        return false;
+    }
+}
+
+// --- Audio Logic ---
 
         // ============================================================
         // AKASHVANI DYNAMIC STREAM RESOLVER
@@ -3662,7 +3761,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 url
             );
 
-            loadAudioSource(url);
+            loadAudioSource(normalizeStreamUrl(url));
             initAudioEQ();
 
             if (url.includes(".js")) {
@@ -3977,7 +4076,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(warnEl) warnEl.classList.remove('hidden');
                 
                 const url = STATIONS[currentStationIndex].url;
-                loadAudioSource(url, true);
+                loadAudioSource(normalizeStreamUrl(url), true);
                 if (isPlaying) {
                     const playPromise = audio.play();
                     if(playPromise !== undefined) playPromise.catch(()=>{});
