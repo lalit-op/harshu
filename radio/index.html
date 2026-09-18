@@ -1760,9 +1760,9 @@ document.addEventListener('DOMContentLoaded', () => {
     <script>
         // --- Data ---
         const STATIONS = [
-            { id: 15, name: "AIR Shimla", slogan: "103.7 FM • Hindi/English", location: "Shimla", url: "https://d1tmej9eu7kw5c.cloudfront.net/0b6f48bb61b49957/0b6f48bb61b49957.m3u8", color: "#ff0055", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/airshimla.jpg", category: "AIR" },
-            { id: 14, name: "AIR Hamirpur", slogan: "101.8 FM • LIVE RADIO", location: "Hamirpur", url: "https://d1cvqgmbcpg5yn.cloudfront.net/51244bb8a94ec8ec/51244bb8a94ec8ec.m3u8", color: "#00ff88", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/hamirpurair.jpg", category: "AIR" },
-            { id: 13, name: "AIR Dharamshala", slogan: "103.4 FM • 51 Kbps", location: "Dharamshala", url: "https://d3hrxqn1tritdh.cloudfront.net/c3ae5f110a14d3ba/c3ae5f110a14d3ba.m3u8", color: "#0055ff", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/air-dharamshala.jpg", category: "AIR" },
+            { id: 15, name: "AIR Shimla", slogan: "103.7 FM • Hindi/English", location: "Shimla", url: "", dynamicAkashvani: true, akashvaniName: "Akashvani Shimla", color: "#ff0055", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/airshimla.jpg", category: "AIR" },
+            { id: 14, name: "AIR Hamirpur", slogan: "101.8 FM • LIVE RADIO", location: "Hamirpur", url: "", dynamicAkashvani: true, akashvaniName: "Akashvani Hamirpur FM", color: "#00ff88", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/hamirpurair.jpg", category: "AIR" },
+            { id: 13, name: "AIR Dharamshala", slogan: "103.4 FM • 51 Kbps", location: "Dharamshala", url: "", dynamicAkashvani: true, akashvaniName: "Akashvani Dharamshala", color: "#0055ff", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/air-dharamshala.jpg", category: "AIR" },
             { id: 12, name: "Vividh Bharati", slogan: "देश की सुरीली धड़कन", location: "India", url: "https://air.pc.cdn.bitgravity.com/air/live/pbaudio001/playlist.m3u8", color: "#ff5500", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/vividh_bharati.webp", category: "AIR" },
             { id: 18, name: "All India Radio Live", slogan: "LIVE RADIO", location: "India", url: "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio002/hlspbaudio00264kbps.m3u8", color: "#00aaff", isPopular: true, isTrending: true, isFavorite: false, logo: "https://c.ndtvimg.com/2019-01/190mnkj8_all-india-radio-air_625x300_04_January_19.jpg", category: "AIR" },
             { id: 19, name: "Air FM Gold", slogan: "LIVE RADIO", location: "India", url: "https://airhlspush.pc.cdn.bitgravity.com/httppush/hlspbaudio005/hlspbaudio00564kbps.m3u8", color: "#d4af37", isPopular: true, isTrending: true, isFavorite: false, logo: "https://onlineradiofm.in/assets/image/radio/180/fmgold.webp", category: "AIR" },
@@ -3304,6 +3304,161 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Audio Logic ---
 
+        // ============================================================
+        // AKASHVANI DYNAMIC STREAM RESOLVER
+        // ============================================================
+        // The station URLs for some Akashvani streams can change.
+        // We therefore fetch the latest machine-readable station list
+        // from the Akashvani repository every time a dynamic station
+        // is played instead of keeping a permanent .m3u8 URL here.
+        //
+        // The repository provides stations.json for programmatic use.
+        // ============================================================
+
+        const AKASHVANI_STATIONS_JSON =
+            "https://raw.githubusercontent.com/codito/akashvani/master/stations.json";
+
+        let akashvaniFetchController = null;
+        let playRequestToken = 0;
+
+        function normalizeAkashvaniName(value) {
+            return String(value || "")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, " ")
+                .trim()
+                .replace(/\s+/g, " ");
+        }
+
+        async function fetchAkashvaniStreamUrl(stationName) {
+            // Cancel an older station-list request if the user changes
+            // stations before the previous request finishes.
+            if (akashvaniFetchController) {
+                akashvaniFetchController.abort();
+            }
+
+            akashvaniFetchController = new AbortController();
+
+            const url =
+                AKASHVANI_STATIONS_JSON +
+                "?cacheBust=" +
+                Date.now();
+
+            try {
+                console.log(
+                    "[Akashvani] Fetching latest station list..."
+                );
+
+                const response = await fetch(url, {
+                    method: "GET",
+                    cache: "no-store",
+                    signal: akashvaniFetchController.signal,
+                    headers: {
+                        "Accept": "application/json"
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(
+                        "Akashvani station list returned HTTP " +
+                        response.status
+                    );
+                }
+
+                const data = await response.json();
+
+                // Current repository format is a JSON array.
+                // Keep this tolerant in case the repository wraps it
+                // inside an object in the future.
+                const stations = Array.isArray(data)
+                    ? data
+                    : Array.isArray(data.stations)
+                        ? data.stations
+                        : [];
+
+                if (!stations.length) {
+                    throw new Error(
+                        "Akashvani station list is empty or invalid."
+                    );
+                }
+
+                const wanted = normalizeAkashvaniName(stationName);
+
+                const station = stations.find(item => {
+                    return (
+                        normalizeAkashvaniName(item.name) === wanted
+                    );
+                });
+
+                if (!station) {
+                    throw new Error(
+                        'Akashvani station "' +
+                        stationName +
+                        '" was not found in stations.json.'
+                    );
+                }
+
+                if (
+                    typeof station.stream_url !== "string" ||
+                    !station.stream_url.trim()
+                ) {
+                    throw new Error(
+                        'Akashvani station "' +
+                        stationName +
+                        '" has no stream_url.'
+                    );
+                }
+
+                const streamUrl = station.stream_url.trim();
+
+                console.log(
+                    "[Akashvani] " +
+                    stationName +
+                    " → " +
+                    streamUrl
+                );
+
+                return streamUrl;
+
+            } catch (error) {
+                if (error.name === "AbortError") {
+                    console.warn(
+                        "[Akashvani] Previous station request cancelled."
+                    );
+                    return null;
+                }
+
+                console.error(
+                    "[Akashvani] Failed to fetch current stream:",
+                    error
+                );
+
+                return null;
+            } finally {
+                akashvaniFetchController = null;
+            }
+        }
+
+        async function resolveStationUrl(station) {
+            if (!station || !station.dynamicAkashvani) {
+                return station ? station.url : "";
+            }
+
+            const latestUrl = await fetchAkashvaniStreamUrl(
+                station.akashvaniName
+            );
+
+            if (!latestUrl) {
+                return null;
+            }
+
+            // Keep the latest URL in memory so the rest of Harsh-IT
+            // continues to work normally with the existing player.
+            station.url = latestUrl;
+
+            return latestUrl;
+        }
+
+
         function loadAudioSource(url, forceReload = false) {
             if (!forceReload && currentLoadedUrl === url && audio.src) return; 
             currentLoadedUrl = url;
@@ -3412,77 +3567,180 @@ document.addEventListener('DOMContentLoaded', () => {
             else playStation(idx);
         }
 
-        function togglePlay() {
+        async function togglePlay() {
             hasStartedPlaying = true;
-            const url = STATIONS[currentStationIndex].url;
-            
+
+            const station = STATIONS[currentStationIndex];
+            if (!station) return;
+
             if (isPlaying) {
-                if (url.includes('.js')) {
-                    const jsContainer = document.getElementById('injected-js-player-container');
+                const currentUrl = station.url || "";
+
+                if (currentUrl.includes(".js")) {
+                    const jsContainer =
+                        document.getElementById(
+                            "injected-js-player-container"
+                        );
+
                     if (jsContainer) jsContainer.remove();
+
                     isPlaying = false;
+                    isLoading = false;
                     updateUIState();
                 } else {
                     audio.pause();
                 }
-            } else {
-                loadAudioSource(url);
-                initAudioEQ();
 
-                if (!url.includes('.js')) {
-                    const playPromise = audio.play();
-                    if (playPromise !== undefined) {
-                        isLoading = true;
-                        updateUIState();
-                        playPromise.catch(err => {
-                            if (err.name !== 'AbortError') {
-                                console.error(err);
-                                showError();
-                            }
-                        });
-                    }
-                } else {
-                    isPlaying = true;
-                    isLoading = false;
-                    updateUIState();
-                }
+                return;
             }
+
+            // Dynamic Akashvani stations always resolve the URL again
+            // before playback. This prevents an old URL from being
+            // reused after Akashvani changes its stream address.
+            await playStation(currentStationIndex);
         }
 
-        function playStation(index) {
+        async function playStation(index) {
+            const station = STATIONS[index];
+            if (!station) return;
+
+            const requestToken = ++playRequestToken;
+
             hasStartedPlaying = true;
             currentStationIndex = index;
-            const url = STATIONS[currentStationIndex].url;
-            
-            audio.setAttribute('crossorigin', 'anonymous');
+
+            audio.setAttribute("crossorigin", "anonymous");
             isCorsBlocked = false;
-            
-            const warnEl = document.getElementById('eq-cors-warning');
-            if(warnEl) warnEl.classList.add('hidden');
-            
-            loadAudioSource(url);
+
+            const warnEl =
+                document.getElementById("eq-cors-warning");
+
+            if (warnEl) warnEl.classList.add("hidden");
+
             hideError();
-            
-            initAudioEQ();
 
             isPlaying = true;
             isLoading = true;
             updateUIState();
-            applyView(currentView); 
-            
-            if (!url.includes('.js')) {
-                const playPromise = audio.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(err => {
-                        if (err.name !== 'AbortError') {
-                            console.error(err);
-                            showError();
-                        }
-                    });
+            applyView(currentView);
+
+            let url = station.url || "";
+
+            // ========================================================
+            // GET THE CURRENT AKASHVANI URL
+            // ========================================================
+            if (station.dynamicAkashvani) {
+                url = await resolveStationUrl(station);
+
+                // Ignore a response belonging to an older click.
+                if (requestToken !== playRequestToken) {
+                    return;
                 }
-            } else {
+
+                if (!url) {
+                    console.error(
+                        "[Akashvani] Could not resolve the current stream."
+                    );
+
+                    isPlaying = false;
+                    isLoading = false;
+                    updateUIState();
+                    showError();
+                    return;
+                }
+            }
+
+            // Another station may have been selected while the URL
+            // was being fetched.
+            if (requestToken !== playRequestToken) {
+                return;
+            }
+
+            console.log(
+                "[Player] Loading:",
+                station.name,
+                url
+            );
+
+            loadAudioSource(url);
+            initAudioEQ();
+
+            if (url.includes(".js")) {
+                isPlaying = true;
                 isLoading = false;
                 updateUIState();
+                return;
+            }
+
+            try {
+                const playPromise = audio.play();
+
+                if (playPromise !== undefined) {
+                    await playPromise;
+                }
+
+                if (requestToken !== playRequestToken) {
+                    return;
+                }
+
+                isPlaying = true;
+                isLoading = false;
+                updateUIState();
+
+            } catch (err) {
+                if (err.name === "AbortError") {
+                    return;
+                }
+
+                console.error(
+                    "[Player] Playback error:",
+                    err
+                );
+
+                // If an Akashvani stream fails immediately, fetch the
+                // station list one more time. This helps if the URL
+                // changed between the JSON request and playback.
+                if (
+                    station.dynamicAkashvani &&
+                    requestToken === playRequestToken
+                ) {
+                    console.warn(
+                        "[Akashvani] Playback failed. Refreshing stream URL once..."
+                    );
+
+                    const retryUrl =
+                        await resolveStationUrl(station);
+
+                    if (
+                        retryUrl &&
+                        requestToken === playRequestToken
+                    ) {
+                        try {
+                            loadAudioSource(
+                                retryUrl,
+                                true
+                            );
+
+                            await audio.play();
+
+                            isPlaying = true;
+                            isLoading = false;
+                            updateUIState();
+                            return;
+
+                        } catch (retryError) {
+                            console.error(
+                                "[Akashvani] Retry failed:",
+                                retryError
+                            );
+                        }
+                    }
+                }
+
+                isLoading = false;
+                isPlaying = false;
+                updateUIState();
+                showError();
             }
         }
 
