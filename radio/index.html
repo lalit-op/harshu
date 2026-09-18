@@ -629,18 +629,7 @@
             }
         }
 
-    
-/* Perfectly circular profile avatars */
-#profile-avatar,
-#nav-profile-img,
-#onboarding-avatar-preview {
-    border-radius: 50% !important;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    overflow: hidden;
-}
-
-</style>
+    </style>
 
 <style>
 @media (max-width: 767px) {
@@ -909,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div class="relative mb-6 group shrink-0">
                 <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-primary to-purple-600 p-1 shadow-[0_0_20px_rgba(249,17,85,0.3)] mx-auto relative z-10">
-                    <img id="onboarding-avatar-preview" src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Unknown&backgroundColor=transparent" class="w-full h-full rounded-full bg-card" alt="Avatar Preview">
+                    <img id="onboarding-avatar-preview" src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=${username}&backgroundColor=pink" class="w-full h-full rounded-full bg-card" alt="Avatar Preview">
                 </div>
                 <button onclick="shuffleAvatar()" class="absolute bottom-0 right-0 bg-card p-2 rounded-full border border-white/10 md:hover:border-primary text-gray-300 active:text-white md:hover:text-white transition md:hover:scale-110 shadow-lg z-20" title="Shuffle Emoji / Cartoon Avatar">
                     <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
@@ -1007,7 +996,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="nav-text text-[9px] md:text-sm font-semibold mt-0 whitespace-nowrap md:block">Pro EQ</span>
             </button>
             <button onclick="window.location.hash='profile'" id="nav-profile" class="flex flex-col md:flex-row items-center justify-center md:justify-start gap-1 md:gap-4 text-gray-500 border border-transparent active:text-white md:hover:text-white relative w-14 h-14 md:w-full md:h-auto p-1 md:px-4 md:py-4 rounded-2xl md:hover:bg-white/5 active:scale-95 md:active:scale-100 transition-all duration-300 group mt-0 md:mt-auto md:mb-4">
-                <img id="nav-profile-img" src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Unknown&backgroundColor=transparent" class="w-6 h-6 md:w-7 md:h-7 shrink-0 rounded-full bg-white/5 shadow-sm border border-gray-600 md:group-hover:border-white transition-colors" alt="Profile Avatar">
+                <img id="nav-profile-img" src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Unknown&backgroundColor=pink" class="w-6 h-6 md:w-7 md:h-7 shrink-0 rounded-full bg-white/5 shadow-sm border border-gray-600 md:group-hover:border-white transition-colors" alt="Profile Avatar">
                 <span class="nav-text text-[9px] md:text-sm font-semibold mt-0 whitespace-nowrap md:block">Profile</span>
             </button>
         </nav>
@@ -1292,7 +1281,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </button>
 
                             <div class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-primary to-purple-600 p-1 shrink-0 shadow-lg">
-                                <img id="profile-avatar" src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Unknown&backgroundColor=transparent" class="w-full h-full rounded-full bg-card" alt="Avatar">
+                                <img id="profile-avatar" src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=Unknown&backgroundColor=pink" class="w-full h-full rounded-full bg-card" alt="Avatar">
                             </div>
                             <div>
                                 <h2 id="profile-name" class="text-2xl md:text-3xl font-bold text-white mb-1 tracking-tight">User</h2>
@@ -1839,7 +1828,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Profile State
         let userName = localStorage.getItem('harsh_it_username') || 'User';
         let userAvatarSeed = localStorage.getItem('harsh_it_avatar_seed') || 'custom_1';
-        let userAvatarBg = localStorage.getItem('harsh_it_avatar_bg') || 'transparent';
+        let userAvatarBg = localStorage.getItem('harsh_it_avatar_bg') || 'pink';
         let personalizedTrendingIds = [];
 
         // --- Elements ---
@@ -1942,6 +1931,9 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'cyber', name: 'Cyber' },
             { id: 'spark', name: 'Spark' }
         ];
+        const CUSTOM_AVATARS = [
+            { id: 'custom_1', name: 'My Avatar 1', src: 'https://i.im.ge/QQrveaz/1000500704.png' }
+        ];
 
         const BG_EFFECTS = [
             { id: 'off', name: 'Off', type: 'css' },
@@ -1984,15 +1976,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: 'mirage', name: 'Mirage' },
             { id: 'void', name: 'Void' },
             { id: 'candy', name: 'Candy' }
-        ];
-
-        // --- Custom user avatars ---
-        // Replace these with direct image URLs if a Google Photos share-page URL
-        // does not load directly inside an <img> element.
-        const CUSTOM_AVATARS = [
-            { id: 'custom_1', name: 'Custom Avatar 1', src: 'https://photos.app.goo.gl/YW5ZmixXXawyqNQF6' },
-            { id: 'custom_2', name: 'Custom Avatar 2', src: 'https://photos.app.goo.gl/7pptPqccTP3M4uBF9' },
-            { id: 'custom_3', name: 'Custom Avatar 3', src: 'https://photos.app.goo.gl/VCAuvA29d45236c17' }
         ];
 
         const CUTE_SEEDS = [
@@ -2105,52 +2088,8 @@ document.addEventListener('DOMContentLoaded', () => {
             { id: '111827', name: 'Dark', value: '111827' },
             { id: 'f8fafc', name: 'White', value: 'f8fafc' }
         ];
-// --- Default Rangoli Avatar ---
-const DEFAULT_RANGOLI_AVATAR = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <defs>
-    <radialGradient id="bg" cx="50%" cy="45%" r="70%">
-      <stop offset="0%" stop-color="#171722"/>
-      <stop offset="100%" stop-color="#08080d"/>
-    </radialGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="5" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-  <circle cx="256" cy="256" r="256" fill="url(#bg)"/>
-  <g transform="translate(256 256)" fill="none" stroke-linecap="round" filter="url(#glow)">
-    <circle r="190" stroke="#ffb800" stroke-width="8"/>
-    <circle r="150" stroke="#f91155" stroke-width="7"/>
-    <circle r="112" stroke="#00e5ff" stroke-width="7"/>
-    <circle r="72" stroke="#b200ff" stroke-width="7"/>
-    <g stroke-width="7">
-      <path d="M0-190L0-72M0 72L0 190M-190 0L-72 0M72 0L190 0" stroke="#ffb800"/>
-      <path d="M-134-134L-51-51M51 51L134 134M134-134L51-51M-51 51L-134 134" stroke="#f91155"/>
-      <path d="M0-150C-45-105-45-45 0 0C45-45 45-105 0-150Z" stroke="#00e5ff"/>
-      <path d="M0 150C-45 105-45 45 0 0C45 45 45 105 0 150Z" stroke="#00e5ff"/>
-      <path d="M-150 0C-105-45-45-45 0 0C-45 45-105 45-150 0Z" stroke="#b200ff"/>
-      <path d="M150 0C105-45 45-45 0 0C45 45 105 45 150 0Z" stroke="#b200ff"/>
-    </g>
-    <circle r="28" fill="#ffcc33" stroke="#fff" stroke-width="5"/>
-  </g>
-  <circle cx="256" cy="256" r="222" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
-</svg>
-`)}`;
-
-function rangoliAvatarUrl() {
-    return DEFAULT_RANGOLI_AVATAR;
-}
-
-
-
 
         function avatarUrl(seed = userAvatarSeed, bg = userAvatarBg) {
-            const custom = CUSTOM_AVATARS.find(a => a.id === seed);
-            if (custom) return custom.src;
-
-            if (!seed || seed === 'Unknown' || seed === 'Rangoli') return rangoliAvatarUrl();
-
             const bgParam = bg === 'transparent' ? 'transparent' : bg;
             return `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(seed)}&backgroundColor=${bgParam}`;
         }
@@ -2173,27 +2112,12 @@ function rangoliAvatarUrl() {
 
         function renderAvatarGrid() {
             const grid = document.getElementById('avatar-grid');
-            if (grid && grid.children.length === 0) {
-                const customHtml = CUSTOM_AVATARS.map((avatar, index) => `
-                    <button onclick="selectAvatar('${avatar.id}')" type="button"
-                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border ${index === 0 ? 'border-primary ring-2 ring-primary/40' : 'border-white/10'} md:hover:border-primary md:hover:bg-white/10 active:scale-95 transition-all focus:outline-none flex-shrink-0 relative overflow-hidden group"
-                        title="${avatar.name}${index === 0 ? ' — Default' : ''}">
-                        <img src="${avatar.src}"
-                            class="w-full h-full object-cover rounded-full md:group-hover:scale-110 transition-transform"
-                            alt="${avatar.name}">
+            if(grid && grid.children.length === 0) {
+                grid.innerHTML = CUTE_SEEDS.map(seed => `
+                    <button onclick="selectAvatar('${seed}')" type="button" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 md:hover:border-primary md:hover:bg-white/10 active:scale-95 transition-all focus:outline-none flex-shrink-0 relative overflow-hidden group">
+                        <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=${seed}&backgroundColor=transparent" class="w-full h-full object-cover md:group-hover:scale-110 transition-transform" alt="${seed} cartoon avatar">
                     </button>
                 `).join('');
-
-                const oldHtml = CUTE_SEEDS.map(seed => `
-                    <button onclick="selectAvatar('${seed}')" type="button"
-                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/5 border border-white/10 md:hover:border-primary md:hover:bg-white/10 active:scale-95 transition-all focus:outline-none flex-shrink-0 relative overflow-hidden group">
-                        <img src="https://api.dicebear.com/9.x/fun-emoji/svg?seed=${seed}&backgroundColor=transparent"
-                            class="w-full h-full object-cover rounded-full md:group-hover:scale-110 transition-transform"
-                            alt="${seed} cartoon avatar">
-                    </button>
-                `).join('');
-
-                grid.innerHTML = customHtml + oldHtml;
             }
         }
 
@@ -2214,16 +2138,12 @@ function rangoliAvatarUrl() {
         }
 
         function shuffleAvatar() {
-            const allAvatarIds = [
-                ...CUSTOM_AVATARS.map(a => a.id),
-                ...CUTE_SEEDS
-            ];
-            userAvatarSeed = allAvatarIds[Math.floor(Math.random() * allAvatarIds.length)];
+            userAvatarSeed = CUTE_SEEDS[Math.floor(Math.random() * CUTE_SEEDS.length)];
             document.getElementById('onboarding-avatar-preview').src = avatarUrl();
-
+            
             const inputVal = document.getElementById('onboarding-name-input').value.trim();
-            if (!inputVal) {
-                document.getElementById('onboarding-name-input').placeholder = "Random Avatar Selected!";
+            if(!inputVal) {
+                document.getElementById('onboarding-name-input').placeholder = "Random Emoji / Cartoon Avatar Selected!";
             }
         }
 
