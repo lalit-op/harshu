@@ -1563,7 +1563,9 @@ station.name,
 url
 );
 loadAudioSource(normalizeStreamUrl(url));
-initAudioEQ();
+// Keep cross-origin radio streams on native audio output. A MediaElementSource
+// can produce silence for streams without CORS permission even if play() succeeds.
+// EQ initialization is intentionally skipped here to avoid muting valid streams.
 if (url.includes(".js")) {
 isPlaying = true;
 isLoading = false;
